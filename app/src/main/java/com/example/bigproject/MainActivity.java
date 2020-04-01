@@ -14,6 +14,7 @@ import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -22,10 +23,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,11 +54,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void SetPermission(){
-
+        //Разрешение на чтение галереи
         int permissionstatusReadGalary = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE);
         if(permissionstatusReadGalary == PackageManager.GET_RECEIVERS);
-        else {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},REQUEST_OF_PERMISSION);
+        else ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},REQUEST_OF_PERMISSION);
+        //Разрешение на отображение поверх экрана
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, REQUEST_OF_PERMISSION);
+            }
         }
     }
     private Bitmap GetLastImage(){
@@ -95,14 +103,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showToast() {
-        //создаём и отображаем текстовое уведомление
-        Toast toast = Toast.makeText(getApplicationContext(),
-                "Пора покормить кота!",
-                Toast.LENGTH_SHORT);
-        toast.show();
-    }
-
     TextView textView;
     ImageView imageView;
 
@@ -113,16 +113,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Получаем разрешение на чтение из галереи
+        //Получаем разрешение на чтение из галереи и отображение поверх экрана
         SetPermission();
+
+
+
 
 
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.textView);
+
+        if((new Gallary(getApplicationContext()).getImageLaster(1585700000))!=null) textView.setText("Yes");
+        else textView.setText("No");
         clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-
-        
-
 
     }
     @Override
