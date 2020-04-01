@@ -30,7 +30,7 @@ public class Gallary extends AppCompatActivity {
         };
         String sortOrder = MediaStore.Images.Media.DATE_ADDED;
 
-        cursor = context.getApplicationContext().getContentResolver().query(
+        cursor = context.getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 projection,
                 selection,
@@ -56,7 +56,7 @@ public class Gallary extends AppCompatActivity {
         };
         String sortOrder = MediaStore.Video.Media.DATE_ADDED;
 
-        cursor = context.getApplicationContext().getContentResolver().query(
+        cursor =context.getContentResolver().query(
                 MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                 projection,
                 selection,

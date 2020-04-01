@@ -17,16 +17,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,7 +43,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private final int REQUEST_OF_PERMISSION = 1;
@@ -104,7 +107,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     TextView textView;
+    TextView contentText;
+    TextView typeText;
     ImageView imageView;
+    Button btn;
+    DBWork dbWork;
+
 
     private ClipboardManager clipboard;
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -114,18 +122,35 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //Получаем разрешение на чтение из галереи и отображение поверх экрана
-        SetPermission();
+        Intent intent = new Intent(this,MyService.class);
 
+        //Готовим БД
+        dbWork = new DBWork(this);
 
-
-
+        //intent.putExtra("context", (Parcelable) this);
+        MyService.context=getApplicationContext();//Плохо,но не знаю как по-другому
+        startService(intent);
 
         imageView = findViewById(R.id.imageView);
-        textView = findViewById(R.id.textView);
-
-        if((new Gallary(getApplicationContext()).getImageLaster(1585700000))!=null) textView.setText("Yes");
-        else textView.setText("No");
+        contentText=findViewById(R.id.content);
+        typeText=findViewById(R.id.type);
+        btn = findViewById(R.id.button);
+        btn.setOnClickListener(this);
         clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
+
+        SQLiteDatabase db = dbWork.getReadableDatabase();
+        Cursor curs = db.query("mytable",null, null, null, null, null, null);
+
+        // определяем номера столбцов по имени в выборке
+        int idColIndex = curs.getColumnIndex("id");
+        int content = curs.getColumnIndex("content");
+        int type = curs.getColumnIndex("type");
+
+        curs.moveToLast();
+        contentText.setText(curs.getString(content));
+        typeText.setText(curs.getString(type));
+
 
     }
     @Override
@@ -140,5 +165,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return;
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }
