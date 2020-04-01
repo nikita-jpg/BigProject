@@ -6,11 +6,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,6 +38,10 @@ public class MyService extends Service {
     Gallary gallary;
     Thread thread;//поток для сканирования галереи
     long date;//время последнего обновления галереи
+    int widthForButton=0;
+    int heightForButton=0;
+    int widthForButtonMergen=0;
+    int heightForButtonMergen=0;
 
     private void buildThread(){
         thread = new Thread(new Runnable() {
@@ -55,10 +73,35 @@ public class MyService extends Service {
     private void stopThread(){
         thread.interrupt();
     }
-    
-    public static void makeBtn(String str){
+    public  void makeBtn(String str){
+
         MyService.save(str);
     };
+
+
+    public void btn(){
+
+        HUDView hudView = new HUDView(context);
+        // узнаем размеры экрана из класса Display
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                widthForButton,
+                heightForButton,
+                WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                0,
+//              WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+//                      | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                PixelFormat.TRANSPARENT);
+        params.gravity = Gravity.RIGHT | Gravity.TOP;
+        params.horizontalMargin= (float) 0.05;
+        params.verticalMargin= (float) 0.25;
+        params.setTitle("Load Average");
+        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+        wm.addView(hudView, params);
+    }
+
+
+
+
 
     public MyService() {
         gallary = new Gallary(context);
@@ -66,7 +109,8 @@ public class MyService extends Service {
         buildThread();
         handler = new Handler(){
             public void handleMessage(android.os.Message msg){
-                MyService.makeBtn(String.valueOf(msg.obj));
+                super.handleMessage(msg);
+                this.makeBtn(String.valueOf(msg.obj));
             }
         };
     }
@@ -81,7 +125,12 @@ public class MyService extends Service {
     }
 
     public int onStartCommand(Intent intent,int flags,int startId){
+        widthForButton=intent.getIntExtra("widthForButton",0);
+        heightForButton=intent.getIntExtra("heightForButton",0);
+        widthForButtonMergen=intent.getIntExtra("widthForButtonMerge",0);
+        heightForButtonMergen = intent.getIntExtra("heightForButtonMerge",0);
         this.startThread();
+        btn();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -107,3 +156,54 @@ public class MyService extends Service {
         dbWork.close();
     }
 }
+class HUDView extends View {
+    float width;
+    float height;
+
+    public HUDView(Context context) {
+        super(context);
+        Toast.makeText(getContext(),"HUDView", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        Paint paint = new Paint();
+        paint.setColor(Color.DKGRAY);
+        paint.setStyle(Paint.Style.FILL);
+        RectF rect = new RectF();
+        Rect mTextBoundRect = new Rect();
+
+        width= (float) (getWidth());
+        height= (float) (getHeight());
+
+        rect.set(0, 0, width,
+                height);
+
+        paint.setTextSize(100);
+        // Подсчитаем размер текста
+
+        paint.getTextBounds("C", 0, 1, mTextBoundRect);
+        //mTextWidth = textBounds.width();
+        // Используем measureText для измерения ширины
+        float mTextWidth = paint.measureText("C");
+        float mTextHeight = mTextBoundRect.height();
+
+        canvas.drawRoundRect(rect, 20, 20, paint);
+        paint.setColor(Color.BLUE);
+        canvas.drawText("C",width/2-(mTextWidth / 2f),(float) (height)/2+(mTextHeight /2f),paint);
+
+    }
+
+    @Override
+    protected void onLayout(boolean arg0, int arg1, int arg2, int arg3, int arg4) {
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        //return super.onTouchEvent(event);
+        Toast.makeText(getContext(),"onTouchEvent", Toast.LENGTH_LONG).show();
+        return true;
+    }
+}
+
+

@@ -20,16 +20,26 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -113,6 +123,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btn;
     DBWork dbWork;
 
+    int widthForButton;
+    int heightForButton;
+    int widthForButtonMergen;
+    int heightForButtonMergen;
+
+
+
 
     private ClipboardManager clipboard;
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -127,15 +144,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Готовим БД
         dbWork = new DBWork(this);
 
+        // узнаем размеры экрана из класса Display
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics metricsB = new DisplayMetrics();
+        display.getMetrics(metricsB);
+
+        widthForButton = (int) (0.13*metricsB.widthPixels);
+        heightForButton = (int)(0.08*metricsB.heightPixels);
+        widthForButtonMergen = (int) (0.15*metricsB.heightPixels);
+        heightForButtonMergen = (int)(0.05*metricsB.widthPixels);
+
         //intent.putExtra("context", (Parcelable) this);
         MyService.context=getApplicationContext();//Плохо,но не знаю как по-другому
+        intent.putExtra("widthForButton",widthForButton);
+        intent.putExtra("heightForButton",heightForButton);
+        intent.putExtra("widthForButtonMergen",widthForButtonMergen);
+        intent.putExtra("heightForButtonMergen",heightForButtonMergen);
         startService(intent);
 
-        imageView = findViewById(R.id.imageView);
-        contentText=findViewById(R.id.content);
-        typeText=findViewById(R.id.type);
-        btn = findViewById(R.id.button);
-        btn.setOnClickListener(this);
         clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
 
@@ -146,10 +172,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int idColIndex = curs.getColumnIndex("id");
         int content = curs.getColumnIndex("content");
         int type = curs.getColumnIndex("type");
-
-        curs.moveToLast();
-        contentText.setText(curs.getString(content));
-        typeText.setText(curs.getString(type));
 
 
     }
@@ -172,3 +194,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 }
+
