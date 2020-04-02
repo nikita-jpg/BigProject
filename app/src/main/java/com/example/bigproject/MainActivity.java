@@ -53,7 +53,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
 
     private final int REQUEST_OF_PERMISSION = 1;
@@ -78,6 +78,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivityForResult(intent, REQUEST_OF_PERMISSION);
             }
         }
+    }
+
+    private void stertService(){
+        MyService.context=getApplicationContext();//Плохо,но не знаю как по-другому
+        Intent intent = new Intent(this,MyService.class);
+        intent.putExtra("widthForButton",widthForButton);
+        intent.putExtra("heightForButton",heightForButton);
+        startService(intent);
     }
     private Bitmap GetLastImage(){
         Cursor cursor;
@@ -125,10 +133,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     int widthForButton;
     int heightForButton;
-    int widthForButtonMergen;
-    int heightForButtonMergen;
-
-
 
 
     private ClipboardManager clipboard;
@@ -139,12 +143,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
 
-
         //Получаем разрешение на чтение из галереи и отображение поверх экрана
-        Intent intent = new Intent(this,MyService.class);
-
-        //Готовим БД
-        dbWork = new DBWork(this);
+        SetPermission();
 
         // узнаем размеры экрана из класса Display
         Display display = getWindowManager().getDefaultDisplay();
@@ -153,27 +153,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         widthForButton = (int) (0.13*metricsB.widthPixels);
         heightForButton = (int)(0.08*metricsB.heightPixels);
-        widthForButtonMergen = (int) (0.15*metricsB.heightPixels);
-        heightForButtonMergen = (int)(0.05*metricsB.widthPixels);
 
-        //intent.putExtra("context", (Parcelable) this);
-        MyService.context=getApplicationContext();//Плохо,но не знаю как по-другому
-        intent.putExtra("widthForButton",widthForButton);
-        intent.putExtra("heightForButton",heightForButton);
-        intent.putExtra("widthForButtonMergen",widthForButtonMergen);
-        intent.putExtra("heightForButtonMergen",heightForButtonMergen);
-        startService(intent);
+        //Запускаем сервис
+        stertService();
 
-        clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-
-
+        //Готовим БД
+        dbWork = new DBWork(this);
         SQLiteDatabase db = dbWork.getReadableDatabase();
         Cursor curs = db.query("mytable",null, null, null, null, null, null);
 
-        // определяем номера столбцов по имени в выборке
-        int idColIndex = curs.getColumnIndex("id");
-        int content = curs.getColumnIndex("content");
-        int type = curs.getColumnIndex("type");
+        clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
 
     }
@@ -191,9 +180,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onClick(View v) {
-
-    }
 }
 

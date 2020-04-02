@@ -1,110 +1,136 @@
 package com.example.bigproject;
 
 import android.app.Service;
+import android.content.ClipData;
+import android.content.ClipDescription;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.Message;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewPropertyAnimator;
 import android.view.WindowManager;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.ViewPropertyAnimatorCompat;
 
-public class MyService extends Service implements View.OnTouchListener{
+public class MyService extends Service implements View.OnTouchListener {
 
     static Context context;//Возможная ошибка
-    private static DBWork dbWork;
     Handler handler;//принимает сообщение из потока галереи
     Gallary gallary;
     Thread thread;//поток для сканирования галереи
     long date;//время последнего обновления галереи
     String message;
-    int widthForButton=0;
-    int heightForButton=0;;
-    HUDView hudView;
+    int widthForButton = 0;
+    int heightForButton = 0;
     Button mButton;
 
     WindowManager.LayoutParams params;
     WindowManager wm;
 
-    private void buildThread(){
+    ClipboardManager clipboard = (ClipboardManager) context.getSystemService(context.CLIPBOARD_SERVICE);
+    private void buildThread() {
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true){
+                String tekStr="";
+                while (true) {
                     try {
-                        if(gallary.getImageLaster(date)!= null){
+                        if (gallary.getImageLaster(date) != null) {
                             Message msg = new Message();
-                            msg.obj = gallary.getImageLaster(date)+"|Uri";
+                            msg.obj = gallary.getImageLaster(date) + "|Uri";
                             handler.sendMessage(msg);
                             Thread.sleep(2000);
-                            Message msg2=new Message();
-                            msg2.obj="delete";
+                            Message msg2 = new Message();
+                            msg2.obj = "delete";
                             handler.sendMessage(msg2);
-                        }else if (gallary.getVideoLaster(date)!= null){
+                        } else if (gallary.getVideoLaster(date) != null) {
                             Message msg = new Message();
-                            msg.obj = gallary.getVideoLaster(date)+"|Uri";
+                            msg.obj = gallary.getVideoLaster(date) + "|Uri";
                             handler.sendMessage(msg);
                             Thread.sleep(2000);
-                            Message msg2=new Message();
-                            msg2.obj="delete";
+                            Message msg2 = new Message();
+                            msg2.obj = "delete";
+                            handler.sendMessage(msg2);
+                        } else if(!tekStr.equals(MyService.GetTekStr(clipboard))){
+                            tekStr=MyService.GetTekStr(clipboard);
+                            Message msg = new Message();
+                            msg.obj = tekStr + "|txt";
+                            handler.sendMessage(msg);
+                            Thread.sleep(2000);
+                            Message msg2 = new Message();
+                            msg2.obj = "delete";
                             handler.sendMessage(msg2);
                         }
-                        Thread.sleep(100);
-                        date=System.currentTimeMillis()/1000;
+                        date = System.currentTimeMillis() / 1000;
+                        Thread.sleep(250);
                     } catch (InterruptedException ex) {
                     }
                 }
             }
         });
     }
-    private void startThread(){
+
+    private void startThread() {
+        date = System.currentTimeMillis() / 1000;
         thread.start();
     }
-    private void stopThread(){
+
+    private void stopThread() {
         thread.interrupt();
     }
 
-    private void makeBtn(){
+    private void makeBtn() {
+        mButton.setTextColor(context.getResources().getColor(R.color.button_txt_norm));
         mButton.setClickable(true);
         wm.addView(mButton, params);
     }
 
-    private void deleteBtn(){
+    private void deleteBtn() {
         wm.removeView(mButton);
-
     }
+
+
+    public static String GetTekStr(ClipboardManager clipboard){
+
+        ClipData.Item clipData = clipboard.getPrimaryClip().getItemAt(0);
+        return ""+clipData.getText();
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public MyService() {
         gallary = new Gallary(context);
 
-        date = System.currentTimeMillis()/1000;
+        //Описываем работу нового потока-сканнера
         buildThread();
 
-        handler = new Handler(){
+        //Оформляем кнопку
+        mButton = new Button(context);
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setColor(context.getResources().getColor(R.color.button));
+        drawable.setCornerRadius(15);
+        mButton.setBackground(drawable);
+        mButton.setText("C");
+        mButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 45);//надо фиксить
+        mButton.setPadding(0,-17,0,0);
+        mButton.setOnTouchListener(this);
+
+        handler = new Handler() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-            public void handleMessage(android.os.Message msg){
-                if(!msg.obj.equals("delete")) {
-                    message=String.valueOf(msg.obj);
+            public void handleMessage(android.os.Message msg) {
+                if (!msg.obj.equals("delete")) {
+                    message = String.valueOf(msg.obj);
                     makeBtn();
-                }
-                else deleteBtn();
+                } else deleteBtn();
             }
         };
     }
@@ -114,105 +140,51 @@ public class MyService extends Service implements View.OnTouchListener{
         return null;
     }
 
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
     }
 
-    public int onStartCommand(Intent intent,int flags,int startId){
-        widthForButton=intent.getIntExtra("widthForButton",0);
-        heightForButton=intent.getIntExtra("heightForButton",0);
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        widthForButton = intent.getIntExtra("widthForButton", 0);
+        heightForButton = intent.getIntExtra("heightForButton", 0);
 
-        //Работа с кнопкой
-
-        hudView = new HUDView(context);
+        //Оформляем окно
         int LAYOUT_FLAG;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
             LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_PHONE;
         }
-        mButton = new Button(context);
-        mButton.setOnTouchListener(this);
         params = new WindowManager.LayoutParams(
                 widthForButton,
                 heightForButton,
                 LAYOUT_FLAG,
-                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                 PixelFormat.TRANSPARENT);
         params.gravity = Gravity.RIGHT | Gravity.TOP;
-        params.horizontalMargin= (float) 0.05;
-        params.verticalMargin= (float) 0.25;
-
+        params.horizontalMargin = (float) 0.05;
+        params.verticalMargin = (float) 0.25;
         wm = (WindowManager) context.getSystemService(WINDOW_SERVICE);
 
-
+        //Запускаем поток-сканнер
         this.startThread();
 
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void onDestroy(){
+    public void onDestroy() {
         this.stopThread();
         super.onDestroy();
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        DBWork dbWork= new DBWork(context);
+        mButton.setClickable(false);
+        mButton.setTextColor(context.getResources().getColor(R.color.button_txt_pressed));
+        DBWork dbWork = new DBWork(context);
         dbWork.save(message);
         return false;
     }
-}
-class HUDView extends View {
-    float width;
-    float height;
-
-    public HUDView(Context context) {
-        super(context);
-
-        Toast.makeText(getContext(),"HUDView", Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        Paint paint = new Paint();
-        paint.setColor(Color.DKGRAY);
-        paint.setStyle(Paint.Style.FILL);
-        RectF rect = new RectF();
-        Rect mTextBoundRect = new Rect();
-
-        width= (float) (getWidth());
-        height= (float) (getHeight());
-
-        rect.set(0, 0, width,
-                height);
-
-        paint.setTextSize(100);
-        // Подсчитаем размер текста
-
-        paint.getTextBounds("C", 0, 1, mTextBoundRect);
-        //mTextWidth = textBounds.width();
-        // Используем measureText для измерения ширины
-        float mTextWidth = paint.measureText("C");
-        float mTextHeight = mTextBoundRect.height();
-
-        canvas.drawRoundRect(rect, 20, 20, paint);
-        paint.setColor(Color.BLUE);
-        canvas.drawText("C",width/2-(mTextWidth / 2f),(float) (height)/2+(mTextHeight /2f),paint);
-
-    }
-
-    @Override
-    protected void onLayout(boolean arg0, int arg1, int arg2, int arg3, int arg4) {
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        //return super.onTouchEvent(event);
-        Toast.makeText(getContext(),"onTouchEvent", Toast.LENGTH_LONG).show();
-        return true;
-    }
-
 }
 
 
