@@ -1,34 +1,31 @@
 package com.example.bigproject;
 
 import android.app.Service;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
-import android.provider.MediaStore;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import androidx.annotation.RequiresApi;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.ViewPropertyAnimatorCompat;
 
 public class MyService extends Service {
 
@@ -42,6 +39,11 @@ public class MyService extends Service {
     int heightForButton=0;
     int widthForButtonMergen=0;
     int heightForButtonMergen=0;
+    HUDView hudView;
+    Button mButton;
+
+    WindowManager.LayoutParams params;
+    WindowManager wm;
 
     private void buildThread(){
         thread = new Thread(new Runnable() {
@@ -52,15 +54,22 @@ public class MyService extends Service {
                         if(gallary.getImageLaster(date)!= null){
                             Message msg = new Message();
                             msg.obj = gallary.getImageLaster(date)+"|Uri";
-                            handler.handleMessage(msg);
-                            date=System.currentTimeMillis()/1000;
+                            handler.sendMessage(msg);
+                            Thread.sleep(2000);
+                            Message msg2=new Message();
+                            msg2.obj="delete";
+                            handler.sendMessage(msg2);
                         }else if (gallary.getVideoLaster(date)!= null){
                             Message msg = new Message();
                             msg.obj = gallary.getVideoLaster(date)+"|Uri";
-                            handler.handleMessage(msg);
-                            date=System.currentTimeMillis()/1000;
+                            handler.sendMessage(msg);
+                            Thread.sleep(2000);
+                            Message msg2=new Message();
+                            msg2.obj="delete";
+                            handler.sendMessage(msg2);
                         }
-                        Thread.sleep(1000);
+                        Thread.sleep(100);
+                        date=System.currentTimeMillis()/1000;
                     } catch (InterruptedException ex) {
                     }
                 }
@@ -73,44 +82,27 @@ public class MyService extends Service {
     private void stopThread(){
         thread.interrupt();
     }
-    public  void makeBtn(String str){
-
-        MyService.save(str);
-    };
 
 
-    public void btn(){
-
-        HUDView hudView = new HUDView(context);
-        // узнаем размеры экрана из класса Display
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                widthForButton,
-                heightForButton,
-                WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
-                0,
-//              WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-//                      | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                PixelFormat.TRANSPARENT);
-        params.gravity = Gravity.RIGHT | Gravity.TOP;
-        params.horizontalMargin= (float) 0.05;
-        params.verticalMargin= (float) 0.25;
-        params.setTitle("Load Average");
-        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+    public void makeBtn(){
         wm.addView(hudView, params);
     }
+    
+    public void deleteBtn(){
+        wm.removeView(hudView);
 
-
-
-
-
+    }
     public MyService() {
         gallary = new Gallary(context);
+
         date = System.currentTimeMillis()/1000;
         buildThread();
+
         handler = new Handler(){
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
             public void handleMessage(android.os.Message msg){
-                super.handleMessage(msg);
-                this.makeBtn(String.valueOf(msg.obj));
+                if(!msg.obj.equals("delete")) makeBtn();
+                else deleteBtn();
             }
         };
     }
@@ -129,8 +121,31 @@ public class MyService extends Service {
         heightForButton=intent.getIntExtra("heightForButton",0);
         widthForButtonMergen=intent.getIntExtra("widthForButtonMerge",0);
         heightForButtonMergen = intent.getIntExtra("heightForButtonMerge",0);
+
+        //Работа с кнопкой
+
+        hudView = new HUDView(context);
+        int LAYOUT_FLAG;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else {
+            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_PHONE;
+        }
+        params = new WindowManager.LayoutParams(
+                widthForButton,
+                heightForButton,
+                LAYOUT_FLAG,
+                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                PixelFormat.TRANSPARENT);
+        params.gravity = Gravity.RIGHT | Gravity.TOP;
+        params.horizontalMargin= (float) 0.05;
+        params.verticalMargin= (float) 0.25;
+
+        wm = (WindowManager) context.getSystemService(WINDOW_SERVICE);
+
+
         this.startThread();
-        btn();
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -139,22 +154,6 @@ public class MyService extends Service {
         super.onDestroy();
     }
 
-    public static void save(String str){
-        dbWork = new DBWork(context);
-        ContentValues contentValues = new ContentValues();
-        SQLiteDatabase db = dbWork.getWritableDatabase();
-
-        String value = str.substring(0,str.indexOf("|"));
-        if(str.substring(str.indexOf("|")+1,str.length()).equals("Uri")){
-            contentValues.put("content",value);
-            contentValues.put("type","Uri");
-        }else{
-            contentValues.put("content",value);
-            contentValues.put("type","txt");
-        }
-        db.insert("mytable", null, contentValues);
-        dbWork.close();
-    }
 }
 class HUDView extends View {
     float width;
@@ -162,6 +161,7 @@ class HUDView extends View {
 
     public HUDView(Context context) {
         super(context);
+
         Toast.makeText(getContext(),"HUDView", Toast.LENGTH_LONG).show();
     }
 
@@ -204,6 +204,7 @@ class HUDView extends View {
         Toast.makeText(getContext(),"onTouchEvent", Toast.LENGTH_LONG).show();
         return true;
     }
+
 }
 
 

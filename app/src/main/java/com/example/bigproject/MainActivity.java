@@ -138,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         //Получаем разрешение на чтение из галереи и отображение поверх экрана
         Intent intent = new Intent(this,MyService.class);
 
