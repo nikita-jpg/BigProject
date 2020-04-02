@@ -2,7 +2,6 @@ package com.example.bigproject;
 
 import android.app.Service;
 import android.content.ClipData;
-import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
@@ -18,30 +17,32 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Gallery;
 
 import androidx.annotation.RequiresApi;
 
 public class MyService extends Service implements View.OnTouchListener {
 
     static Context context;//Возможная ошибка
-    Handler handler;//принимает сообщение из потока галереи
-    Gallary gallary;
-    Thread thread;//поток для сканирования галереи
-    long date;//время последнего обновления галереи
-    String message;
-    int widthForButton = 0;
-    int heightForButton = 0;
-    Button mButton;
+    private Handler handler;//принимает сообщение из потока галереи
+    private GallaryAndBuffer gallary;
+    private Thread thread;//поток для сканирования галереи
+    private long date;//время последнего обновления галереи
+    private String message;//Из потока-сканнера в hendler приходит объект Message,это его свойство obj
+    private String tekStr="";//текущая строка из буфера
+    private int widthForButton = 0;
+    private int heightForButton = 0;
+    private Button mButton;
 
-    WindowManager.LayoutParams params;
-    WindowManager wm;
+    private WindowManager.LayoutParams params;
+    private WindowManager wm;
 
-    ClipboardManager clipboard = (ClipboardManager) context.getSystemService(context.CLIPBOARD_SERVICE);
+
     private void buildThread() {
+        tekStr=gallary.GetTekStr();//Чтобы при первом запуске не появлялось кнопки
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                String tekStr="";
                 while (true) {
                     try {
                         if (gallary.getImageLaster(date) != null) {
@@ -60,8 +61,8 @@ public class MyService extends Service implements View.OnTouchListener {
                             Message msg2 = new Message();
                             msg2.obj = "delete";
                             handler.sendMessage(msg2);
-                        } else if(!tekStr.equals(MyService.GetTekStr(clipboard))){
-                            tekStr=MyService.GetTekStr(clipboard);
+                        } else if(!tekStr.equals(gallary.GetTekStr())){
+                            tekStr=gallary.GetTekStr();
                             Message msg = new Message();
                             msg.obj = tekStr + "|txt";
                             handler.sendMessage(msg);
@@ -99,16 +100,10 @@ public class MyService extends Service implements View.OnTouchListener {
     }
 
 
-    public static String GetTekStr(ClipboardManager clipboard){
-
-        ClipData.Item clipData = clipboard.getPrimaryClip().getItemAt(0);
-        return ""+clipData.getText();
-    }
-
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public MyService() {
-        gallary = new Gallary(context);
+        gallary = new GallaryAndBuffer(context);
 
         //Описываем работу нового потока-сканнера
         buildThread();

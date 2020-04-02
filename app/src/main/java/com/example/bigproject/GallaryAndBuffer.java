@@ -1,5 +1,7 @@
 package com.example.bigproject;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,12 +12,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.net.URI;
 
-public class Gallary extends AppCompatActivity {
+public class GallaryAndBuffer extends AppCompatActivity {
     private Context context;
     private Cursor cursor;
+    private ClipboardManager clipboard;
 
-    Gallary(Context context){
+
+    GallaryAndBuffer(Context context){
         this.context = context;
+        clipboard = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
     }
 
     public Uri getImageLaster(long date){
@@ -70,4 +75,8 @@ public class Gallary extends AppCompatActivity {
             return uri;
         }
     };
+    public String GetTekStr(){
+        ClipData.Item clipData = clipboard.getPrimaryClip().getItemAt(0);
+        return ""+clipData.getText();
+    }
 }
