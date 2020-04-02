@@ -27,7 +27,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.ViewPropertyAnimatorCompat;
 
-public class MyService extends Service {
+public class MyService extends Service implements View.OnTouchListener{
 
     static Context context;//Возможная ошибка
     private static DBWork dbWork;
@@ -35,10 +35,9 @@ public class MyService extends Service {
     Gallary gallary;
     Thread thread;//поток для сканирования галереи
     long date;//время последнего обновления галереи
+    String message;
     int widthForButton=0;
-    int heightForButton=0;
-    int widthForButtonMergen=0;
-    int heightForButtonMergen=0;
+    int heightForButton=0;;
     HUDView hudView;
     Button mButton;
 
@@ -83,13 +82,13 @@ public class MyService extends Service {
         thread.interrupt();
     }
 
-
-    public void makeBtn(){
-        wm.addView(hudView, params);
+    private void makeBtn(){
+        mButton.setClickable(true);
+        wm.addView(mButton, params);
     }
-    
-    public void deleteBtn(){
-        wm.removeView(hudView);
+
+    private void deleteBtn(){
+        wm.removeView(mButton);
 
     }
     public MyService() {
@@ -101,7 +100,10 @@ public class MyService extends Service {
         handler = new Handler(){
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
             public void handleMessage(android.os.Message msg){
-                if(!msg.obj.equals("delete")) makeBtn();
+                if(!msg.obj.equals("delete")) {
+                    message=String.valueOf(msg.obj);
+                    makeBtn();
+                }
                 else deleteBtn();
             }
         };
@@ -119,8 +121,6 @@ public class MyService extends Service {
     public int onStartCommand(Intent intent,int flags,int startId){
         widthForButton=intent.getIntExtra("widthForButton",0);
         heightForButton=intent.getIntExtra("heightForButton",0);
-        widthForButtonMergen=intent.getIntExtra("widthForButtonMerge",0);
-        heightForButtonMergen = intent.getIntExtra("heightForButtonMerge",0);
 
         //Работа с кнопкой
 
@@ -131,6 +131,8 @@ public class MyService extends Service {
         } else {
             LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_PHONE;
         }
+        mButton = new Button(context);
+        mButton.setOnTouchListener(this);
         params = new WindowManager.LayoutParams(
                 widthForButton,
                 heightForButton,
@@ -154,6 +156,12 @@ public class MyService extends Service {
         super.onDestroy();
     }
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        DBWork dbWork= new DBWork(context);
+        dbWork.save(message);
+        return false;
+    }
 }
 class HUDView extends View {
     float width;

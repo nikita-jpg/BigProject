@@ -9,9 +9,11 @@ import androidx.annotation.Nullable;
 
 public class DBWork extends SQLiteOpenHelper {
 
+    Context context;
 
     public DBWork(@Nullable Context context) {
         super(context, "myDB", null, 1);
+        this.context=context;
     }
 
     @Override
@@ -27,7 +29,7 @@ public class DBWork extends SQLiteOpenHelper {
 
     }
 
-    public void save(String str,Context context){
+    public void save(String str){
         DBWork dbWork = new DBWork(context);
         ContentValues contentValues = new ContentValues();
         SQLiteDatabase db = dbWork.getWritableDatabase();
@@ -36,7 +38,7 @@ public class DBWork extends SQLiteOpenHelper {
         if(str.substring(str.indexOf("|")+1,str.length()).equals("Uri")){
             contentValues.put("content",value);
             contentValues.put("type","Uri");
-        }else{
+        }else if(str.length()!=0){
             contentValues.put("content",value);
             contentValues.put("type","txt");
         }
