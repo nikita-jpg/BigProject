@@ -76,7 +76,7 @@ public class GallaryAndBuffer extends AppCompatActivity {
         }
     };
     public String GetTekStr(){
-        ClipData.Item clipData = clipboard.getPrimaryClip().getItemAt(0);
-        return ""+clipData.getText();
+        if(clipboard.hasPrimaryClip()) return ""+clipboard.getPrimaryClip().getItemAt(0).getText();
+        else return "";
     }
 }

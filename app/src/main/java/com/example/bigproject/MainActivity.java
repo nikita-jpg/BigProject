@@ -32,6 +32,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -68,19 +69,30 @@ public class MainActivity extends AppCompatActivity {
 
     private void SetPermission(){
         //Разрешение на чтение галереи
-        int permissionstatusReadGalary = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE);
-        if(permissionstatusReadGalary == PackageManager.GET_RECEIVERS);
-        else ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},REQUEST_OF_PERMISSION);
+        int permissionStatusReadGalary = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE);
+        int permissionStatusAlertWindow = ContextCompat.checkSelfPermission(this,Manifest.permission.SYSTEM_ALERT_WINDOW);
+
         //Разрешение на отображение поверх экрана
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && permissionStatusAlertWindow!=PackageManager.PERMISSION_GRANTED) {
             if (!Settings.canDrawOverlays(this)) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
                 startActivityForResult(intent, REQUEST_OF_PERMISSION);
             }
         }
+
+        if(permissionStatusReadGalary == PackageManager.PERMISSION_GRANTED);
+        else ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},REQUEST_OF_PERMISSION);
+
     }
 
     private void stertService(){
+        // узнаем размеры экрана из класса Display
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics metricsB = new DisplayMetrics();
+        display.getMetrics(metricsB);
+
+        int widthForButton = (int) (0.13*metricsB.widthPixels);
+        int heightForButton = (int)(0.08*metricsB.heightPixels);
         MyService.context=getApplicationContext();//Плохо,но не знаю как по-другому
         Intent intent = new Intent(this,MyService.class);
         intent.putExtra("widthForButton",widthForButton);
@@ -131,9 +143,6 @@ public class MainActivity extends AppCompatActivity {
     Button btn;
     DBWork dbWork;
 
-    int widthForButton;
-    int heightForButton;
-
 
     private ClipboardManager clipboard;
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -142,36 +151,34 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         //Получаем разрешение на чтение из галереи и отображение поверх экрана
         SetPermission();
-
-        // узнаем размеры экрана из класса Display
-        Display display = getWindowManager().getDefaultDisplay();
-        DisplayMetrics metricsB = new DisplayMetrics();
-        display.getMetrics(metricsB);
-
-        widthForButton = (int) (0.13*metricsB.widthPixels);
-        heightForButton = (int)(0.08*metricsB.heightPixels);
 
         //Запускаем сервис
         stertService();
 
-        //Готовим БД
+        /*Готовим БД
         dbWork = new DBWork(this);
         SQLiteDatabase db = dbWork.getReadableDatabase();
         Cursor curs = db.query("mytable",null, null, null, null, null, null);
-
-        clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        */
+        //clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
 
     }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_OF_PERMISSION:
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
+                    String arr = "daa";
                     // permission granted
                 } else {
                     this.finish();

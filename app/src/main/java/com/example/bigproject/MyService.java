@@ -1,10 +1,11 @@
 package com.example.bigproject;
 
+import android.app.KeyguardManager;
 import android.app.Service;
-import android.content.ClipData;
-import android.content.ClipboardManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
@@ -12,12 +13,12 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Gallery;
 
 import androidx.annotation.RequiresApi;
 
@@ -25,7 +26,7 @@ public class MyService extends Service implements View.OnTouchListener {
 
     static Context context;//Возможная ошибка
     private Handler handler;//принимает сообщение из потока галереи
-    private GallaryAndBuffer gallary;
+    private GallaryAndBuffer gallaryAndBuffer;
     private Thread thread;//поток для сканирования галереи
     private long date;//время последнего обновления галереи
     private String message;//Из потока-сканнера в hendler приходит объект Message,это его свойство obj
@@ -39,31 +40,32 @@ public class MyService extends Service implements View.OnTouchListener {
 
 
     private void buildThread() {
-        tekStr=gallary.GetTekStr();//Чтобы при первом запуске не появлялось кнопки
+        tekStr= gallaryAndBuffer.GetTekStr();//Чтобы при первом запуске не появлялось кнопки
         thread = new Thread(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void run() {
                 while (true) {
                     try {
-                        if (gallary.getImageLaster(date) != null) {
+                        if (gallaryAndBuffer.getImageLaster(date) != null) {
                             Message msg = new Message();
-                            msg.obj = gallary.getImageLaster(date) + "|Uri";
+                            msg.obj = gallaryAndBuffer.getImageLaster(date) + "|Uri";
                             handler.sendMessage(msg);
                             Thread.sleep(2000);
                             Message msg2 = new Message();
                             msg2.obj = "delete";
                             handler.sendMessage(msg2);
-                        } else if (gallary.getVideoLaster(date) != null) {
+                        } else if (gallaryAndBuffer.getVideoLaster(date) != null) {
                             Message msg = new Message();
-                            msg.obj = gallary.getVideoLaster(date) + "|Uri";
+                            msg.obj = gallaryAndBuffer.getVideoLaster(date) + "|Uri";
                             handler.sendMessage(msg);
                             Thread.sleep(2000);
                             Message msg2 = new Message();
                             msg2.obj = "delete";
                             handler.sendMessage(msg2);
-                        } else if(!tekStr.equals(gallary.GetTekStr())){
-                            tekStr=gallary.GetTekStr();
+                        } else if( !"".equals(gallaryAndBuffer.GetTekStr()) && !tekStr.equals(gallaryAndBuffer.GetTekStr())){
                             Message msg = new Message();
+                            tekStr= gallaryAndBuffer.GetTekStr();
                             msg.obj = tekStr + "|txt";
                             handler.sendMessage(msg);
                             Thread.sleep(2000);
@@ -89,6 +91,7 @@ public class MyService extends Service implements View.OnTouchListener {
         thread.interrupt();
     }
 
+
     private void makeBtn() {
         mButton.setTextColor(context.getResources().getColor(R.color.button_txt_norm));
         mButton.setClickable(true);
@@ -100,10 +103,9 @@ public class MyService extends Service implements View.OnTouchListener {
     }
 
 
-
     @RequiresApi(api = Build.VERSION_CODES.M)
     public MyService() {
-        gallary = new GallaryAndBuffer(context);
+        gallaryAndBuffer = new GallaryAndBuffer(context);
 
         //Описываем работу нового потока-сканнера
         buildThread();
@@ -180,6 +182,8 @@ public class MyService extends Service implements View.OnTouchListener {
         dbWork.save(message);
         return false;
     }
+
+
 }
 
 
