@@ -2,29 +2,20 @@ package com.example.bigproject;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Base64;
 
-import androidx.annotation.Nullable;
-
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Vector;
 
 public class ZametkaWork {
 
@@ -40,9 +31,13 @@ public class ZametkaWork {
     }
 
 
-    public String getAndEncodeBitmap(Uri uri){
-
-        String str = "";
+    public static Bitmap deSerializationBitmap(String str)
+    {
+        byte[] decodedBytes = Base64.decode(str, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    }
+    public String serializationBitmap(Uri uri)
+    {
 
         ContentResolver resolver = context.getContentResolver();
         try {
@@ -54,12 +49,12 @@ public class ZametkaWork {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG,100,byteArrayOutputStream);
-        str = Base64.encodeToString(byteArrayOutputStream.toByteArray(),0);
 
-        return str;
+        return Base64.encodeToString(byteArrayOutputStream.toByteArray(),0);
     }
 
-    private Zametka makeZametka(){
+    private Zametka makeZametka()
+    {
         Zametka zametka = new Zametka();
 
         //Сохраняем дату
@@ -75,7 +70,8 @@ public class ZametkaWork {
     }
 
     //Создаёт и сохраняет заметку на телефоне
-    public void MakeAndSaveTextZam(String str){
+    public void MakeAndSaveTextZam(String str)
+    {
         inf = str.substring(0,str.indexOf("|"));
 
         //Теперь мы сериализуем изображение в поток байтов,а его в строку. Это довольно тяжёлая задача, поэтому она в отдельном потоке
@@ -117,7 +113,7 @@ public class ZametkaWork {
                 zametka.setText("");
 
                 //Сериализуем фото
-                String bitmapStr = getAndEncodeBitmap(uri);
+                String bitmapStr = serializationBitmap(uri);
 
                 //Добавляем фото к заметке(в виде строки)
                 zametka.setBitmap(bitmapStr);
@@ -125,12 +121,22 @@ public class ZametkaWork {
                 //Сохраняемя заметку в файл
                 LocalBase.save(zametka);
 
+                try {
+                    String afd ="5644";
+                    Vector<Zametka> vector = LocalBase.getZamLocal();
+                    Bitmap bitmap = LocalBase.getBitmap(vector.get(0).getData());
+                    String aad ="5644";
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+
+                //Тут точка останова
                 String v = "4";
                 thread.interrupt();
                 }
             });
         thread.start();
     }
-
 
 }

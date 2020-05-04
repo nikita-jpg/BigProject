@@ -38,6 +38,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -156,24 +157,30 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //Получаем разрешение на чтение из галереи и отображение поверх экрана
-        //SetPermission();
+        SetPermission();
 
         //Запускаем сервис
         stertService();
 
 
-        /*
-        String string = "Hello world!";
-        StringBuilder stringBuilder = new StringBuilder();
 
-        File filed = new File(getFilesDir()+"/folder");
-        if (!filed.exists()) {
-            d = filed.mkdir();
-            String sd ="54";
+
+
+
+
+
+        File file1 = new File(getFilesDir()+"/folder");
+        if (!file1.exists()) {
+            file1.mkdir();
+        }
+        File file2 = new File(getFilesDir()+"/images");
+        if (!file2.exists()) {
+            file2.mkdir();
         }
 
 
 
+        /*
         String root = String.valueOf(getFilesDir());
         File file = new File(root+"/folder/15.txt");
         boolean a = true;
@@ -216,25 +223,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    public StringBuilder getStringFromFile(File file){
-
-        StringBuilder otvet= new StringBuilder();
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-            String line;
-
-            while ((line=bufferedReader.readLine())!=null) otvet.append(line);
-
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return otvet;
-    }
 
     @Override
     protected void onRestart() {
