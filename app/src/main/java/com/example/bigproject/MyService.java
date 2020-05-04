@@ -1,19 +1,16 @@
 package com.example.bigproject;
 
-import android.app.KeyguardManager;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +18,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import androidx.annotation.RequiresApi;
+
+import java.io.IOException;
 
 public class MyService extends Service implements View.OnTouchListener {
 
@@ -39,14 +38,16 @@ public class MyService extends Service implements View.OnTouchListener {
     private WindowManager wm;
 
 
-    private void buildThread() {
+    private void buildThread()
+    {
         tekStr= gallaryAndBuffer.GetTekStr();//Чтобы при первом запуске не появлялось кнопки
         thread = new Thread(new Runnable() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void run() {
                 while (true) {
-                    try {
+                    try
+                    {
                         if (gallaryAndBuffer.getImageLaster(date) != null) {
                             Message msg = new Message();
                             msg.obj = gallaryAndBuffer.getImageLaster(date) + "|Uri";
@@ -63,7 +64,8 @@ public class MyService extends Service implements View.OnTouchListener {
                             Message msg2 = new Message();
                             msg2.obj = "delete";
                             handler.sendMessage(msg2);
-                        } else if( !"".equals(gallaryAndBuffer.GetTekStr()) && !tekStr.equals(gallaryAndBuffer.GetTekStr())){
+                        }
+                        else if( !"".equals(gallaryAndBuffer.GetTekStr()) && !tekStr.equals(gallaryAndBuffer.GetTekStr())) {
                             Message msg = new Message();
                             tekStr= gallaryAndBuffer.GetTekStr();
                             msg.obj = tekStr + "|txt";
@@ -176,13 +178,23 @@ public class MyService extends Service implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+
         mButton.setClickable(false);
         mButton.setTextColor(context.getResources().getColor(R.color.button_txt_pressed));
-        DBWork dbWork = new DBWork(context);
-        dbWork.save(message);
+        ZametkaWork zametka = new ZametkaWork(context);
+        try
+        {
+            //Если заметка содержит фото,то в строке есть Uri
+            if(message.substring(message.indexOf("|")+1,message.length()).equals("Uri"))
+                zametka.MakeAndSaveImageZam(Uri.parse(message.substring(0,message.indexOf("|"))));
+            else zametka.MakeAndSaveTextZam(message);
+
+        } catch (IOException | ClassNotFoundException e)
+        {
+            e.printStackTrace();
+        }
         return false;
     }
-
 
 }
 

@@ -7,52 +7,37 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
-import android.view.Gravity;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -119,11 +104,10 @@ public class MainActivity extends AppCompatActivity {
         );
         cursor.moveToLast();
         long id = cursor.getLong(0);//id колонки id всегда 0
+
+
         Uri contentUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-
         ContentResolver resolver = getApplicationContext().getContentResolver();
-
-
         Bitmap bitmap = Bitmap.createBitmap(100, 100,
                 Bitmap.Config.ARGB_8888);;
         try {
@@ -136,12 +120,32 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public Zametka makeZametka(){
+        Zametka zametka = new Zametka();
+
+        //Сохраняем дату
+        Date currentDate = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+        String dateText = dateFormat.format(currentDate);
+        zametka.setData(dateText);
+
+        //По дефолту имя заметки = дата
+        zametka.setName(dateText);
+
+        return zametka;
+    }
+
     TextView textView;
     TextView contentText;
     TextView typeText;
     ImageView imageView;
     Button btn;
-    DBWork dbWork;
+    ZametkaWork dbWork;
+
+    public void setImage(Bitmap image){
+        ImageView imageView = findViewById(R.id.imageView);
+        imageView.setImageBitmap(image);
+    }
 
 
     private ClipboardManager clipboard;
@@ -152,19 +156,84 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //Получаем разрешение на чтение из галереи и отображение поверх экрана
-        SetPermission();
+        //SetPermission();
 
         //Запускаем сервис
         stertService();
 
+
+        /*
+        String string = "Hello world!";
+        StringBuilder stringBuilder = new StringBuilder();
+
+        File filed = new File(getFilesDir()+"/folder");
+        if (!filed.exists()) {
+            d = filed.mkdir();
+            String sd ="54";
+        }
+
+
+
+        String root = String.valueOf(getFilesDir());
+        File file = new File(root+"/folder/15.txt");
+        boolean a = true;
+        if (!file.exists()) {
+            try {
+                a = file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        File file1 = new File(root+"/folder/14.txt");
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file1);
+            fileOutputStream.write(string.getBytes());
+            fileOutputStream.close();
+
+            File file11 = new File(root+"/folder/14.txt");
+            FileInputStream fileInputStream = new FileInputStream(file11);
+
+            int i=-1;
+            while((i=fileInputStream.read())!=-1){
+                stringBuilder.append((char)i);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String b ="5";
+
+
+         */
         /*Готовим БД
-        dbWork = new DBWork(this);
+        dbWork = new ZametkaWork(this);
         SQLiteDatabase db = dbWork.getReadableDatabase();
         Cursor curs = db.query("mytable",null, null, null, null, null, null);
         */
         //clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
 
+    }
+
+
+    public StringBuilder getStringFromFile(File file){
+
+        StringBuilder otvet= new StringBuilder();
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+            String line;
+
+            while ((line=bufferedReader.readLine())!=null) otvet.append(line);
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return otvet;
     }
 
     @Override
