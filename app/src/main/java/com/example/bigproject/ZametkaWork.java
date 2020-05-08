@@ -9,13 +9,11 @@ import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Vector;
 
 public class ZametkaWork {
 
@@ -33,6 +31,7 @@ public class ZametkaWork {
 
     public static Bitmap deSerializationBitmap(String str)
     {
+        if(str.length() == 0) return null;
         byte[] decodedBytes = Base64.decode(str, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
@@ -52,7 +51,6 @@ public class ZametkaWork {
 
         return Base64.encodeToString(byteArrayOutputStream.toByteArray(),0);
     }
-
     private Zametka makeZametka()
     {
         Zametka zametka = new Zametka();
@@ -69,7 +67,10 @@ public class ZametkaWork {
         return zametka;
     }
 
-    //Создаёт и сохраняет заметку на телефоне
+
+
+    //Создаём и сохраняем заметку на телефоне
+    //Если заметка была вызвана соханением картинки
     public void MakeAndSaveTextZam(String str)
     {
         inf = str.substring(0,str.indexOf("|"));
@@ -97,7 +98,8 @@ public class ZametkaWork {
         });
         thread.start();
     }
-    public void MakeAndSaveImageZam(Uri ArgUri) throws IOException, ClassNotFoundException
+    //Если заметка была вызвана сохраением текста
+    public void MakeAndSaveImageZam(Uri ArgUri)
     {
         uri = ArgUri;
         //Теперь мы сериализуем изображение в поток байтов,а его в строку. Это довольно тяжёлая задача, поэтому она в отдельном потоке
@@ -121,18 +123,6 @@ public class ZametkaWork {
                 //Сохраняемя заметку в файл
                 LocalBase.save(zametka);
 
-                try {
-                    String afd ="5644";
-                    Vector<Zametka> vector = LocalBase.getZamLocal();
-                    Bitmap bitmap = LocalBase.getBitmap(vector.get(0).getData());
-                    String aad ="5644";
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-
-                //Тут точка останова
-                String v = "4";
                 thread.interrupt();
                 }
             });

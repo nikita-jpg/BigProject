@@ -182,17 +182,11 @@ public class MyService extends Service implements View.OnTouchListener {
         mButton.setClickable(false);
         mButton.setTextColor(context.getResources().getColor(R.color.button_txt_pressed));
         ZametkaWork zametka = new ZametkaWork(context);
-        try
-        {
-            //Если заметка содержит фото,то в строке есть Uri
-            if(message.substring(message.indexOf("|")+1,message.length()).equals("Uri"))
-                zametka.MakeAndSaveImageZam(Uri.parse(message.substring(0,message.indexOf("|"))));
-            else zametka.MakeAndSaveTextZam(message);
+        //Если заметка содержит фото,то в строке есть Uri
+        if(message.substring(message.indexOf("|")+1,message.length()).equals("Uri"))
+            zametka.MakeAndSaveImageZam(Uri.parse(message.substring(0,message.indexOf("|"))));
+        else zametka.MakeAndSaveTextZam(message);
 
-        } catch (IOException | ClassNotFoundException e)
-        {
-            e.printStackTrace();
-        }
         return false;
     }
 

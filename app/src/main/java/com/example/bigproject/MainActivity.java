@@ -12,7 +12,9 @@ import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -28,12 +30,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     private final int REQUEST_OF_PERMISSION = 1;
+    public static final String APP_PREFERENCES = "mysettings";
+    public static final String AUTORIZATION = "Autorisation";
+
     private String GetClipType(ClipboardManager clipboard){
 
         ClipData.Item clipData = clipboard.getPrimaryClip().getItemAt(0);
@@ -53,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
         else return "intent";
     }
 
-    private void SetPermission(){
+    private void SetPermission()
+    {
         //Разрешение на чтение галереи
         int permissionStatusReadGalary = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE);
         int permissionStatusAlertWindow = ContextCompat.checkSelfPermission(this,Manifest.permission.SYSTEM_ALERT_WINDOW);
@@ -71,7 +77,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void stertService(){
+    private void stertService()
+    {
         // узнаем размеры экрана из класса Display
         Display display = getWindowManager().getDefaultDisplay();
         DisplayMetrics metricsB = new DisplayMetrics();
@@ -85,6 +92,35 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("heightForButton",heightForButton);
         startService(intent);
     }
+
+
+    private void checkAutorization() {
+        mSittings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        if(mSittings.contains(AUTORIZATION))
+        {
+            if(mSittings.getString(AUTORIZATION,"false").equals("false")) {
+                LocalBase.firstSetting();
+                SharedPreferences.Editor editor = mSittings.edit();
+                editor.putString(AUTORIZATION,"true");
+                editor.apply();
+            }
+
+            else
+            {
+                //Не открываем окно авторизации, а сразу окно приложения
+            }
+        }
+        else
+        {
+            LocalBase.firstSetting();
+            SharedPreferences.Editor editor = mSittings.edit();
+            editor.putString(AUTORIZATION,"true");
+            editor.apply();
+        }
+    }
+
+
+
     private Bitmap GetLastImage(){
         Cursor cursor;
         String[] projection = new String[] {
@@ -143,11 +179,14 @@ public class MainActivity extends AppCompatActivity {
     Button btn;
     ZametkaWork dbWork;
 
+    SharedPreferences mSittings;
+
+
+
     public void setImage(Bitmap image){
         ImageView imageView = findViewById(R.id.imageView);
         imageView.setImageBitmap(image);
     }
-
 
     private ClipboardManager clipboard;
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -156,28 +195,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Получаем разрешение на чтение из галереи и отображение поверх экрана
-        SetPermission();
-
-        //Запускаем сервис
-        stertService();
-
-
-
-
-
-
-
-
-        File file1 = new File(getFilesDir()+"/folder");
-        if (!file1.exists()) {
-            file1.mkdir();
-        }
-        File file2 = new File(getFilesDir()+"/images");
-        if (!file2.exists()) {
-            file2.mkdir();
-        }
-
+        Intent intent = new Intent(MainActivity.this,Autorization.class);
+        startActivity(intent);
 
 
         /*
@@ -221,27 +240,6 @@ public class MainActivity extends AppCompatActivity {
         //clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
 
-    }
-
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_OF_PERMISSION:
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
-                    String arr = "daa";
-                    // permission granted
-                } else {
-                    this.finish();
-                }
-                return;
-        }
     }
 
 }
