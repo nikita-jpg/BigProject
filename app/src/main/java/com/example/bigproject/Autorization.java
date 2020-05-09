@@ -96,7 +96,6 @@ public class Autorization extends Activity {
     }
 
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,9 +112,10 @@ public class Autorization extends Activity {
 
         LocalBase.firstSetting();
 
-        /*
+
         try {
-            Bitmap bitmap = LocalBase.getBitmap("09:26:29.txt");
+            Vector<Zametka> vector = LocalBase.getZamLocal();
+            Bitmap bitmap = LocalBase.getBitmap(vector.get(0).getData()+".txt");
             ImageView imageView = findViewById(R.id.imageView2);
             imageView.setImageBitmap(bitmap);
             String asd ="+5";
@@ -123,7 +123,8 @@ public class Autorization extends Activity {
             e.printStackTrace();
         }
 
-         */
+
+
 
 
     }

@@ -50,6 +50,7 @@ public class LocalBase {
     private static String storePassword = "";
     private static String alias = "";
     private static String keyPairPassword = "";
+    private static String keySecterPassword = "";
 
 
                     /* Инициализация важных переменных из config.propirties */
@@ -69,6 +70,7 @@ public class LocalBase {
             alias= properties.getProperty("alias");
             storePassword = properties.getProperty("storePassword");
             keyPairPassword = properties.getProperty("keyPairPassword");
+            keySecterPassword = properties.getProperty("keySecterPassword");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -82,17 +84,23 @@ public class LocalBase {
         final Calendar end = Calendar.getInstance();
         end.add(Calendar.YEAR, 100);
 
-
         KeyProps keyProps = new KeyProps.Builder()
                 .setAlias(alias)
                 .setPassword(keyPairPassword.toCharArray())
-                .setKeySize(256)
-                .setKeyType(Options.ALGORITHM_AES)
-                .setBlockModes(Options.BLOCK_MODE_CBC)
-                .setEncryptionPaddings(Options.PADDING_PKCS_7)
+                .setKeySize(512)
+                .setKeyType("RSA")
+                .setSerialNumber(BigInteger.ONE)
+                .setSubject(new X500Principal("CN=" + alias + " CA Certificate"))
+                .setStartDate(start.getTime())
+                .setEndDate(end.getTime())
+                .setBlockModes("ECB")
+                .setEncryptionPaddings("PKCS1Padding")
+                .setSignatureAlgorithm("SHA256WithRSAEncryption")
                 .build();
+
         Store store = new Store(context,storeName,storePassword.toCharArray());
-        store.generateSymmetricKey(alias,keyPairPassword.toCharArray());
+        store.generateAsymmetricKey(keyProps);
+        store.generateSymmetricKey(alias,keySecterPassword.toCharArray());
     }
     public static void firstSetting()
     {
@@ -114,71 +122,40 @@ public class LocalBase {
                     /* Шифрование */
     public static synchronized String encode(String value)
     {
-        Crypto crypto = new Crypto(Options.TRANSFORMATION_SYMMETRIC);
 
         Store store = new Store(context,storeName,storePassword.toCharArray());
-
-        SecretKey secretKey = store.getSymmetricKey(alias,keyPairPassword.toCharArray());
-
-        value = "Attachment parties pure sociable started extended at rejoiced. \n" +
-                "\n" +
-                "Speaking lively luckily lady mother himself attachment bred form been necessary. Think possible near. Order dashwoods might arranging unknown having burst sending. Interested remainder fruit. Unable absolute perpetual tedious give improving conveying taken attacks doors miles. \n" +
-                "\n" +
-                "Very rent head. Books friend behind tears. Necessary september prepared certainty fond up civil direction keeps. Judgment continuing rich laughter welcome eat fact remark same discovered. Speaking then tears private unlocked around desirous necessary witty remaining principles. \n" +
-                "\n" +
-                "Forming most furniture shortly daughters advanced worth. Unsatiable period insipidity attacks plan downs northward consider ask mistaken even few. Full ourselves well evening one northward offending stimulated thoughts added witty aware. Country event weather more right pleased you blush too forfeited interested point turned procured welcomed. Genius propriety mirth comfort smallest evening remember wound shy. \n" +
-                "\n" +
-                "Other merry marry explain properly attention mrs otherwise excuse. Exposed procured visitor daughter forbade known china arose wandered. Feet open may length strictly mirth we eldest warmly unreserved weather state domestic favour ignorant. Suitable looking perpetual use drift dinner. Danger talked lasted am humanity shyness relied effect believe adieus. \n" +
-                "\n" +
-                "Months widen still enabled margaret favourable towards man followed. True acuteness event rapid mother john spoil amounted smallest throwing admiration itself waited. Procuring equal unwilling fulfilled shy misery feet scarcely tastes hundred improve hastily. Cultivated married intention. Feebly little dissuade coming answered delay principle plan concealed past pleasure when read terms mistress. \n" +
-                "\n" +
-                "Unfeeling carried avoid remember justice change around change. Wicket departure welcomed game added forty get rapturous believe post engrossed. Thought suffer forming followed shameless regular three too solicitude. Horses favourable misery. But removing wonder gave child since cordial differed civil affronting whether thirty dine whole. \n" +
-                "\n" +
-                "Vicinity preference four amiable leave assurance china turned. Additions removing continue been vicinity week pulled eyes avoid while feeling extremely. Sudden respect abilities before become change quit breeding has additions musical delay message income pure hoped the. Sang produced believe county become more round event called unfeeling ashamed exposed outweigh think thought outlived what. Repair said likely make wandered chamber. \n" +
-                "\n" +
-                "Child desire numerous sell ten justice being sportsman nature country jokes father procuring related. Norland as early before answer. Family contempt highest village suspicion dwelling. Voice partiality cease improve times her sold dashwoods as way burst. Journey bed young tolerably door abilities. \n" +
-                "\n" +
-                "Fulfilled inquietude six address fact late call resolve beauty forth. Off blessing genius add. Wound warrant almost favour intention feebly behaved good replied agreeable happiness afraid. Pasture whatever downs arranging remarkably consider common pretty on cultivated use regular why shortly. Occasional sometimes song. \n" +
-                "\n" +
-                "Will estimating marriage style mother outward hoped nor continuing. Since amiable attempt assurance there piqued temper sir asked found if before. Differed departure what another pianoforte dearest sister. Weeks she linen middleton morning engage forth middleton same moment. Green removal savings procured venture feet desire. \n" +
-                "\n" +
-                "Together affixed stand gravity leaf easy told admire looked amongst being opinions principles friendship request. ";
-
-        String enc = "";
-        Bitmap bitmap;
-        String password = "~=2UC:!y2NHJ(mh.-([fqZ\\)\"+W+9}Yt6</nBJjwLJ*BAMw-M\\vpQKbqP{u&Fs8E\"dDn]x>#)]}&=-*Kc-paJsVkRZwjAD][g=g*5fe}N>*J5AGe*Mpn{w4Q/+FFM%)@c-,+:BHWv7r>*D+gRmXJPh@3589s+5m.;8$2EBn2?az?LfH=G--D\\-!>k^73:k3=9bw{v8p9@3D%_N<4e'NWxxXdtaf9MH\"<[W]H;rP$Q{Jxujup\\9,c$*#)Tue6p[sC";
-
-        String encryptedData = crypto.encrypt(value,secretKey,true);
-        String DencryptedData = crypto.decrypt(encryptedData,secretKey);
-        Bitmap bitmap1 = ZametkaWork.deSerializationBitmap(DencryptedData);
+        String encryptedData = null;
+        try {
+            encryptedData = AESCrypt.encrypt(store.getSymmetricKey(alias,keySecterPassword.toCharArray()).toString(),value);
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
         return encryptedData;
     }
     public static synchronized String deCode(String value)
     {
 
-
-        Crypto crypto = new Crypto(Options.TRANSFORMATION_SYMMETRIC);
-
         Store store = new Store(context,storeName,storePassword.toCharArray());
-        SecretKey secretKey = store.getSymmetricKey(alias,keyPairPassword.toCharArray());
-
-        String encryptedData = crypto.decrypt(value,secretKey,true);
-        return encryptedData;
-
+        String decryptedData = null;
+        try {
+            decryptedData = AESCrypt.decrypt(store.getSymmetricKey(alias,keySecterPassword.toCharArray()).toString(),value);
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+        return decryptedData;
     }
 
 
                     /* Сереализация */
     private static synchronized String serializationZametke(Serializable serializable) throws IOException
     {
-                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+        objectOutputStream.writeObject(serializable);
+        objectOutputStream.close();
 
-                        objectOutputStream.writeObject(serializable);
-                        objectOutputStream.close();
-
-                        return Base64.encodeToString(byteArrayOutputStream.toByteArray(),0);
-                    }
+        return Base64.encodeToString(byteArrayOutputStream.toByteArray(),0);
+    }
     public static synchronized Zametka deSerializationZametka(String str) throws IOException,ClassNotFoundException
     {
         byte[] data = Base64.decode(str,0);
