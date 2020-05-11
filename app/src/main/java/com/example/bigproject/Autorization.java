@@ -37,6 +37,7 @@ public class Autorization extends Activity implements View.OnClickListener {
     private TextView requestTextView;
 
 
+    //Запускаем главное окно приложения
     private void startMainClass()
     {
         SharedPreferences.Editor editor = mSittings.edit();
@@ -47,6 +48,7 @@ public class Autorization extends Activity implements View.OnClickListener {
         startActivity(intent);
     }
 
+    //Запрашиваем разрешения
     private void SetPermission()
     {
         //Разрешение на чтение галереи
@@ -66,6 +68,7 @@ public class Autorization extends Activity implements View.OnClickListener {
 
     }
 
+    //Проверяем,выполнен ли уже вход
     private boolean checkAutorization()
     {
 
@@ -76,6 +79,7 @@ public class Autorization extends Activity implements View.OnClickListener {
             return false;
     }
 
+    //Выводим сообщение для пользователя
     private void requestToUser(String request)
     {
         requestTextView.setText(request);
@@ -91,8 +95,6 @@ public class Autorization extends Activity implements View.OnClickListener {
         //Проверяем,был ли человек уже авторизован
         if(checkAutorization())
         {
-            //LocalBase.initialization(this.getApplicationContext());
-            LocalBase.initialization(this);
             startMainClass();
         }
         else
@@ -157,6 +159,7 @@ public class Autorization extends Activity implements View.OnClickListener {
             enterBtn.setClickable(false);
             regBtn.setClickable(false);
             requestToUser(getString(R.string.waiting_srver_request));
+            //Если пользователь нажал "войти"
             if (v.getId() == R.id.enterBtn)
             {
                  runnable = new Runnable() {
@@ -168,6 +171,7 @@ public class Autorization extends Activity implements View.OnClickListener {
                     }
                 };
             }
+            //Если пользователь нажал "регистрация"
             else
             {
                 runnable = new Runnable() {
