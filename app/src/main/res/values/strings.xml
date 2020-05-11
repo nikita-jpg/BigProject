@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">BigProject</string>
+    <string name="enter_Btn_text">Вход</string>
+    <string name="reg_Btn_text">Регистрация</string>
+    <string name="login_hint">Логин</string>
+    <string name="password_hind">Пароль</string>
+    <string name="small_login_or_password">Длина логина и пароля должна быть >= 8-ми символов</string>
+    <string name="waiting_srver_request">Ожидание ответа сервера</string>
+    <string name="request_minus_1">Неверный логин или пароль</string>
+    <string name="request_0">Сервер не доуступен</string>
+    <string name="request_1">Успех</string>
+    <string name="request_2">Логин уже занят</string>
 </resources>

@@ -2,37 +2,50 @@ package com.example.bigproject;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipDescription;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
-import android.util.DisplayMetrics;
-import android.view.Display;
-import android.widget.ImageView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import java.io.FileNotFoundException;
-import java.util.Vector;
 
-
-public class Autorization extends Activity {
+public class Autorization extends Activity implements View.OnClickListener {
 
     private final int REQUEST_OF_PERMISSION = 1;
     private final String APP_PREFERENCES = "mysettings";
     private final String AUTORIZATION = "Autorisation";
     private SharedPreferences mSittings;
+
+    private Button enterBtn;
+    private Button regBtn;
+    private EditText loginText;
+    private EditText passwordText;
+    private TextView requestTextView;
+
+
+    private void startMainClass()
+    {
+        SharedPreferences.Editor editor = mSittings.edit();
+        editor.putString(AUTORIZATION,"true");
+        editor.apply();
+        Intent intent = new Intent(Autorization.this,MainClass.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
 
     private void SetPermission()
     {
@@ -53,79 +66,122 @@ public class Autorization extends Activity {
 
     }
 
-    private void stertService()
+    private boolean checkAutorization()
     {
-        // узнаем размеры экрана из класса Display
-        Display display = getWindowManager().getDefaultDisplay();
-        DisplayMetrics metricsB = new DisplayMetrics();
-        display.getMetrics(metricsB);
 
-        int widthForButton = (int) (0.13*metricsB.widthPixels);
-        int heightForButton = (int)(0.08*metricsB.heightPixels);
-        MyService.context=getApplicationContext();//Плохо,но не знаю как по-другому
-        Intent intent = new Intent(this,MyService.class);
-        intent.putExtra("widthForButton",widthForButton);
-        intent.putExtra("heightForButton",heightForButton);
-        startService(intent);
-    }
-
-    private void checkAutorization() {
-        LocalBase.initialization(this.getApplicationContext());
         mSittings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        if(mSittings.contains(AUTORIZATION))
-        {
-            if(mSittings.getString(AUTORIZATION,"false").equals("false")) {
-                LocalBase.firstSetting();
-                SharedPreferences.Editor editor = mSittings.edit();
-                editor.putString(AUTORIZATION,"true");
-                editor.apply();
-            }
-
-            else
-            {
-                //Не открываем окно авторизации, а сразу окно приложения
-            }
-        }
+        if(mSittings.contains(AUTORIZATION) && mSittings.getString(AUTORIZATION,"true").equals("true") )
+            return true;
         else
-        {
-            LocalBase.firstSetting();
-            SharedPreferences.Editor editor = mSittings.edit();
-            editor.putString(AUTORIZATION,"true");
-            editor.apply();
-        }
+            return false;
     }
 
+    private void requestToUser(String request)
+    {
+        requestTextView.setText(request);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_autorization);
 
         //Получаем разрешение на чтение из галереи и отображение поверх экрана
         SetPermission();
 
-        //Проверяем,авторизован ли человек
-        checkAutorization();
+        //Проверяем,был ли человек уже авторизован
+        if(checkAutorization())
+        {
+            //LocalBase.initialization(this.getApplicationContext());
+            LocalBase.initialization(this);
+            startMainClass();
+        }
+        else
+        {
+            setContentView(R.layout.activity_autorization);
+            loginText = findViewById(R.id.loginText);
+            passwordText = findViewById(R.id.passwordText);
+            requestTextView = findViewById(R.id.requestTextView);
+            enterBtn = findViewById(R.id.enterBtn);
+            regBtn = findViewById(R.id.regBtn);
 
-        //Запускаем сервис
-        stertService();
-
-        LocalBase.firstSetting();
-
-
-        try {
-            Vector<Zametka> vector = LocalBase.getZamLocal();
-            Bitmap bitmap = LocalBase.getBitmap(vector.get(0).getData()+".txt");
-            ImageView imageView = findViewById(R.id.imageView2);
-            imageView.setImageBitmap(bitmap);
-            String asd ="+5";
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            enterBtn.setOnClickListener(this);
+            regBtn.setOnClickListener(this);
         }
 
 
+    }
 
+    @Override
+    public void onClick(View v) {
 
+        final ServerWork serverWork = new ServerWork();
+        final String login = loginText.getText().toString();
+        final String password = passwordText.getText().toString();
+
+        //-1:Неверный логин или пароль
+        //0:Сервер не доступен
+        //1:Успех
+        //2:Логин уже занят
+        final Handler handler = new Handler(){
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                switch (msg.arg1)
+                {
+                    case -1:
+                        enterBtn.setClickable(true);
+                        regBtn.setClickable(true);
+                        requestToUser(getString(R.string.request_minus_1));
+                        break;
+                    case 0:
+                        enterBtn.setClickable(true);
+                        regBtn.setClickable(true);
+                        requestToUser(getString(R.string.request_0));
+                        break;
+                    case 1:
+                        startMainClass();
+                        break;
+                    case 2:
+                        enterBtn.setClickable(true);
+                        regBtn.setClickable(true);
+                        requestToUser(getString(R.string.request_2));
+                        break;
+                }
+            }
+        };
+
+        Runnable runnable = null;
+        if(login.length()<8 || password.length()<8) requestToUser(getString(R.string.small_login_or_password));
+        else
+        {
+            enterBtn.setClickable(false);
+            regBtn.setClickable(false);
+            requestToUser(getString(R.string.waiting_srver_request));
+            if (v.getId() == R.id.enterBtn)
+            {
+                 runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        Message message = new Message();
+                        message.arg1 = serverWork.checkAutorizationServer(login,password);
+                        handler.sendMessage(message);
+                    }
+                };
+            }
+            else
+            {
+                runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        Message message = new Message();
+                        message.arg1 = serverWork.registerServer(login,password);
+                        handler.sendMessage(message);
+                    }
+                };
+            }
+            Thread thread = new Thread(runnable);
+            thread.start();
+        }
 
     }
 
@@ -149,3 +205,4 @@ public class Autorization extends Activity {
         }
     }
 }
+
