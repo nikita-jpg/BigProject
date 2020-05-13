@@ -88,7 +88,7 @@ public class SolventRecyclerViewAdapter  extends RecyclerView.Adapter<SolventVie
         if(itemList.size() == 0)
             recyclerView.setBackgroundResource(R.drawable.clean);
         else
-            recyclerView.setBackgroundColor(context.getResources().getColor(R.color.very_black));
+            recyclerView.setBackgroundColor(R.drawable.black_background);
     }
 
     public void setItemList(List<Zametka>  itemList)

@@ -171,15 +171,16 @@ public class LocalBase {
     private static synchronized boolean saveStrBitmap(String name, String strBtm)
     {
         if(strBtm.length() == 0) return false;
-        File file1 = new File(root + folderForImages + "/" + name + ".txt");
+
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file1);
 
             String strBtmEncode = encode(strBtm);
             char[] arrS = deCode(strBtmEncode).toCharArray();
             String arr = deCode(strBtmEncode);
             Bitmap bitmap = ZametkaWork.deSerializationBitmap(String.valueOf(arrS));
 
+            File file1 = new File(root + folderForImages + "/" + name + ".txt");
+            FileOutputStream fileOutputStream = new FileOutputStream(file1);
 
             fileOutputStream.write(strBtmEncode.getBytes());
             fileOutputStream.close();
@@ -213,7 +214,9 @@ public class LocalBase {
         {
             if (saveStrBitmap(zametka.getData(), zametka.getBitmap()))
                 if(saveZamNotBtm(zametka))
+                {
                     return true;
+                }
                 else
                     return false;
             else
@@ -297,6 +300,13 @@ public class LocalBase {
     public static synchronized boolean chheckBitmap(String name) {
         File file = new File(root+folderForImages+"/"+name+".txt");
         return file.exists();
+    }
+
+    /* Проверяет, открыто ли основное окно приложения. И если да,то перерисовывает интерфейс  */
+    private void updateUI()
+    {
+        if(MainClass.mainClassIsWork == true)
+
     }
 }
 

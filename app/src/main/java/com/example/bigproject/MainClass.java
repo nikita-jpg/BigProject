@@ -26,8 +26,10 @@ import java.util.Vector;
 public class MainClass extends AppCompatActivity {
     private StaggeredGridLayoutManager gaggeredGridLayoutManager;
     private List<Zametka> zametkaList = null;
+    private List<Zametka> zametkaListTwo = null;
     private SolventRecyclerViewAdapter rcAdapter;
     private RecyclerView recyclerView;
+    public static boolean mainClassIsWork;
 
     private void startService()
     {
@@ -46,7 +48,6 @@ public class MainClass extends AppCompatActivity {
     }
     private void MakeRecycleViewAndAdapter() throws FileNotFoundException
     {
-
         zametkaList = LocalBase.getZamLocal();
 
         recyclerView = findViewById(R.id.recycler_view);
@@ -59,6 +60,18 @@ public class MainClass extends AppCompatActivity {
         recyclerView.setAdapter(rcAdapter);
     }
 
+    public static void updateUI()
+    {
+        try {
+            zametkaListTwo = LocalBase.getZamLocal();
+
+            rcAdapter.setItemList(zametkaList);
+            rcAdapter.notifyDataSetChanged();
+            rcAdapter.notifyDataSetChangedMyMethod();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,19 +84,24 @@ public class MainClass extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
     }
 
+    protected void onStart() {
+        super.onStart();
+        mainClassIsWork = true;
+    }
+    protected void onStop() {
+        super.onStop();
+        mainClassIsWork = false;
+    }
     @Override
     protected void onRestart() {
         super.onRestart();
-        try {
-            zametkaList = LocalBase.getZamLocal();
-            rcAdapter.setItemList(zametkaList);
-            rcAdapter.notifyDataSetChanged();
-            rcAdapter.notifyDataSetChangedMyMethod();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+
+    }
+
+    public static boolean getMainClassIsWork()
+    {
+        return mainClassIsWork;
     }
 }
