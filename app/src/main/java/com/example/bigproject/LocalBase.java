@@ -3,6 +3,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Message;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
 
@@ -34,6 +35,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.logging.Handler;
 
 import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
@@ -49,12 +51,14 @@ public class LocalBase {
     private static String alias = "";
     private static String keyPairPassword = "";
     private static String keySecterPassword = "";
+    private static android.os.Handler handler = null;
 
 
     /* Инициализация важных переменных из config.propirties */
-    public static void initialization(Context contextIn)
+    public static void initialization(Context contextArg, android.os.Handler handlerArg)
     {
-        context = contextIn;
+        context = contextArg;
+        handler = handlerArg;
         root = String.valueOf(context.getFilesDir());
         Properties properties = new Properties();
         AssetManager assetManager = context.getAssets();
@@ -215,6 +219,7 @@ public class LocalBase {
             if (saveStrBitmap(zametka.getData(), zametka.getBitmap()))
                 if(saveZamNotBtm(zametka))
                 {
+                    updateUI();
                     return true;
                 }
                 else
@@ -223,7 +228,10 @@ public class LocalBase {
                 return false;
         }else {
             if(saveZamNotBtm(zametka))
+            {
+                updateUI();
                 return true;
+            }
             else
                 return false;
         }
@@ -303,10 +311,10 @@ public class LocalBase {
     }
 
     /* Проверяет, открыто ли основное окно приложения. И если да,то перерисовывает интерфейс  */
-    private void updateUI()
+    private static void updateUI()
     {
-        if(MainClass.mainClassIsWork == true)
-
+        Message message = new Message();
+        handler.sendMessage(message);
     }
 }
 

@@ -3,7 +3,10 @@ package com.example.bigproject;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -29,7 +32,7 @@ public class MainClass extends AppCompatActivity {
     private List<Zametka> zametkaListTwo = null;
     private SolventRecyclerViewAdapter rcAdapter;
     private RecyclerView recyclerView;
-    public static boolean mainClassIsWork;
+    protected boolean mainClassIsWork;
 
     private void startService()
     {
@@ -59,15 +62,13 @@ public class MainClass extends AppCompatActivity {
         rcAdapter = new SolventRecyclerViewAdapter(MainClass.this, zametkaList,recyclerView );
         recyclerView.setAdapter(rcAdapter);
     }
-
-    public static void updateUI()
+    protected void updateUI()
     {
         try {
             zametkaListTwo = LocalBase.getZamLocal();
-
-            rcAdapter.setItemList(zametkaList);
-            rcAdapter.notifyDataSetChanged();
+            rcAdapter.setItemList(zametkaListTwo);
             rcAdapter.notifyDataSetChangedMyMethod();
+            rcAdapter.notifyDataSetChanged();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -77,7 +78,17 @@ public class MainClass extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        LocalBase.initialization(getApplicationContext());
+
+        android.os.Handler handler = new Handler()
+        {
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                updateUI();
+            }
+        };
+
+        LocalBase.initialization(getApplicationContext(),handler);
         startService();
         try {
             MakeRecycleViewAndAdapter();
@@ -97,11 +108,6 @@ public class MainClass extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-
-    }
-
-    public static boolean getMainClassIsWork()
-    {
-        return mainClassIsWork;
+        updateUI();
     }
 }

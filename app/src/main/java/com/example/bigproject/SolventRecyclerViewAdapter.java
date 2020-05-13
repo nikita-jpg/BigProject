@@ -27,14 +27,13 @@ public class SolventRecyclerViewAdapter  extends RecyclerView.Adapter<SolventVie
         if(itemList.size() == 0)
             recyclerView.setBackgroundResource(R.drawable.clean);
         else
-            recyclerView.setBackgroundColor(context.getResources().getColor(R.color.very_black));
+            recyclerView.setBackgroundResource(R.drawable.black_background);
     }
 
     @Override
     public SolventViewHolders onCreateViewHolder(ViewGroup parent, int viewType) {
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.zametka_list, null);
         SolventViewHolders rcv = new SolventViewHolders(layoutView);
-
         return rcv;
     }
 
@@ -88,7 +87,7 @@ public class SolventRecyclerViewAdapter  extends RecyclerView.Adapter<SolventVie
         if(itemList.size() == 0)
             recyclerView.setBackgroundResource(R.drawable.clean);
         else
-            recyclerView.setBackgroundColor(R.drawable.black_background);
+            recyclerView.setBackgroundResource(R.drawable.black_background);
     }
 
     public void setItemList(List<Zametka>  itemList)
