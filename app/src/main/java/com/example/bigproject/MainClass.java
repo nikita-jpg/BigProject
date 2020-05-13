@@ -62,13 +62,16 @@ public class MainClass extends AppCompatActivity {
         rcAdapter = new SolventRecyclerViewAdapter(MainClass.this, zametkaList,recyclerView );
         recyclerView.setAdapter(rcAdapter);
     }
-    protected void updateUI()
+    protected synchronized void updateUI()
     {
         try {
             zametkaListTwo = LocalBase.getZamLocal();
-            rcAdapter.setItemList(zametkaListTwo);
-            rcAdapter.notifyDataSetChangedMyMethod();
-            rcAdapter.notifyDataSetChanged();
+            if (!zametkaListTwo.equals(zametkaList)) {
+                zametkaList = zametkaListTwo;
+                rcAdapter.setItemList(zametkaListTwo);
+                rcAdapter.notifyDataSetChangedMyMethod();
+                rcAdapter.notifyDataSetChanged();
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

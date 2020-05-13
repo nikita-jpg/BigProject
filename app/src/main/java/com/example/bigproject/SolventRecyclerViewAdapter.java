@@ -15,7 +15,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 public class SolventRecyclerViewAdapter  extends RecyclerView.Adapter<SolventViewHolders> {
-    private List<Zametka> itemList;
+    protected List<Zametka> itemList;
     private Context context;
     private RecyclerView recyclerView;
 
@@ -40,6 +40,7 @@ public class SolventRecyclerViewAdapter  extends RecyclerView.Adapter<SolventVie
     @Override
     public void onBindViewHolder(final SolventViewHolders holder, int position) {
 
+        holder.zametka=itemList.get(position);
         if(LocalBase.chheckBitmap(itemList.get(position).getData()))
         {
             holder.countryPhoto.setImageResource(R.drawable.loading);
@@ -82,7 +83,6 @@ public class SolventRecyclerViewAdapter  extends RecyclerView.Adapter<SolventVie
         return this.itemList.size();
     }
 
-
     public void notifyDataSetChangedMyMethod() {
         if(itemList.size() == 0)
             recyclerView.setBackgroundResource(R.drawable.clean);
@@ -90,8 +90,9 @@ public class SolventRecyclerViewAdapter  extends RecyclerView.Adapter<SolventVie
             recyclerView.setBackgroundResource(R.drawable.black_background);
     }
 
-    public void setItemList(List<Zametka>  itemList)
+    public void setItemList(List<Zametka> itemList)
     {
         this.itemList = itemList;
     }
+
 }
