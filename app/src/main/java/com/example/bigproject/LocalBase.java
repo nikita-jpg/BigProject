@@ -38,10 +38,6 @@ import java.util.Vector;
 import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
 
-
-
-
-
 public class LocalBase {
 
     private static Context context;
@@ -170,7 +166,6 @@ public class LocalBase {
     }
 
 
-
     /* Сохранение данныых на устройстве */
     //Сохраняем картинку в папку
     private static synchronized boolean saveStrBitmap(String name, String strBtm)
@@ -195,7 +190,6 @@ public class LocalBase {
         return true;
     }
     //Сохраняем заметку в папку
-
     public static synchronized boolean saveZamNotBtm(Zametka zametka)
     {
         zametka.setBitmap("");
@@ -232,7 +226,6 @@ public class LocalBase {
         }
 
     }
-
 
 
     /* Получаем данные */
@@ -280,7 +273,7 @@ public class LocalBase {
         Bitmap bitmap = null;
         StringBuilder stringBuilder = new StringBuilder();
         String len = "";
-        FileInputStream fileInputStream = new FileInputStream(root+folderForImages+"/"+name);
+        FileInputStream fileInputStream = new FileInputStream(root+folderForImages+"/"+name+".txt");
         BufferedReader bufferedReader;
         String text="";
 

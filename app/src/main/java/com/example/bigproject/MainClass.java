@@ -26,6 +26,8 @@ import java.util.Vector;
 public class MainClass extends AppCompatActivity {
     private StaggeredGridLayoutManager gaggeredGridLayoutManager;
     private List<Zametka> zametkaList = null;
+    private SolventRecyclerViewAdapter rcAdapter;
+    private RecyclerView recyclerView;
 
     private void startService()
     {
@@ -47,13 +49,13 @@ public class MainClass extends AppCompatActivity {
 
         zametkaList = LocalBase.getZamLocal();
 
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
 
         gaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
         recyclerView.setLayoutManager(gaggeredGridLayoutManager);
 
-        SolventRecyclerViewAdapter rcAdapter = new SolventRecyclerViewAdapter(MainClass.this, zametkaList,recyclerView );
+        rcAdapter = new SolventRecyclerViewAdapter(MainClass.this, zametkaList,recyclerView );
         recyclerView.setAdapter(rcAdapter);
     }
 
@@ -72,5 +74,16 @@ public class MainClass extends AppCompatActivity {
 
     }
 
-
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        try {
+            zametkaList = LocalBase.getZamLocal();
+            rcAdapter.setItemList(zametkaList);
+            rcAdapter.notifyDataSetChanged();
+            rcAdapter.notifyDataSetChangedMyMethod();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 }
