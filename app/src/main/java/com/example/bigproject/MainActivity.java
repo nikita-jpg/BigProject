@@ -182,12 +182,6 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences mSittings;
 
 
-
-    public void setImage(Bitmap image){
-        ImageView imageView = findViewById(R.id.imageView);
-        imageView.setImageBitmap(image);
-    }
-
     private ClipboardManager clipboard;
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
