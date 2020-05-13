@@ -7,6 +7,8 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-    <style name="MyStyle" parent="Theme.AppCompat.DayNight"></style>
+    <style name="MyStyle" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:colorBackground">@color/very_black</item>
+    </style>
 
 </resources>

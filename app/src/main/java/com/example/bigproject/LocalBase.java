@@ -29,7 +29,9 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -53,7 +55,7 @@ public class LocalBase {
     private static String keySecterPassword = "";
 
 
-                    /* Инициализация важных переменных из config.propirties */
+    /* Инициализация важных переменных из config.propirties */
     public static void initialization(Context contextIn)
     {
         context = contextIn;
@@ -71,12 +73,14 @@ public class LocalBase {
             storePassword = properties.getProperty("storePassword");
             keyPairPassword = properties.getProperty("keyPairPassword");
             keySecterPassword = properties.getProperty("keySecterPassword");
+
+            firstSetting();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-                    /* Когда заходит неавторизованный пользователь */
+    /* Когда заходит неавторизованный пользователь */
     private static void makeKeys()
     {
 
@@ -114,12 +118,11 @@ public class LocalBase {
         if (!file2.exists()) {
             file2.mkdir();
         }
-
         //Создаём ключи для шифрования
         makeKeys();
     }
 
-                    /* Шифрование */
+    /* Шифрование */
     public static synchronized String encode(String value)
     {
 
@@ -146,7 +149,7 @@ public class LocalBase {
     }
 
 
-                    /* Сереализация */
+    /* Сереализация */
     private static synchronized String serializationZametke(Serializable serializable) throws IOException
     {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -168,10 +171,11 @@ public class LocalBase {
 
 
 
-                    /* Сохранение данныых на устройстве */
+    /* Сохранение данныых на устройстве */
     //Сохраняем картинку в папку
     private static synchronized boolean saveStrBitmap(String name, String strBtm)
     {
+        if(strBtm.length() == 0) return false;
         File file1 = new File(root + folderForImages + "/" + name + ".txt");
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file1);
@@ -191,46 +195,59 @@ public class LocalBase {
         return true;
     }
     //Сохраняем заметку в папку
+
+    public static synchronized boolean saveZamNotBtm(Zametka zametka)
+    {
+        zametka.setBitmap("");
+        File file1 = new File(root + folderForZametka +"/"+ zametka.getData() + ".txt");
+        try {
+            String zamStr = serializationZametke(zametka);
+            String zamStrEnc = encode(zamStr);
+
+            FileOutputStream fileOutputStream = new FileOutputStream(file1);
+            fileOutputStream.write(zamStrEnc.getBytes());
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
     public static synchronized boolean save(Zametka zametka)
     {
-
-        if(saveStrBitmap(zametka.getData(),zametka.getBitmap())) {
-
-            zametka.setBitmap("");
-
-            //Имя файла = дата создания заметки
-            File file1 = new File(root + folderForZametka +"/"+ zametka.getData() + ".txt");
-            try {
-                String zamStr = serializationZametke(zametka);
-                String zamStrEnc = encode(zamStr);
-
-                FileOutputStream fileOutputStream = new FileOutputStream(file1);
-                fileOutputStream.write(zamStrEnc.getBytes());
-                fileOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        if(!zametka.getBitmap().equals(""))
+        {
+            if (saveStrBitmap(zametka.getData(), zametka.getBitmap()))
+                if(saveZamNotBtm(zametka))
+                    return true;
+                else
+                    return false;
+            else
                 return false;
-            }
-        }else return false;
+        }else {
+            if(saveZamNotBtm(zametka))
+                return true;
+            else
+                return false;
+        }
 
-        return true;
     }
 
 
 
-                    /* Получаем данные */
+    /* Получаем данные */
     //Получаем вектор,содержащий все заметки в памяти устройства. Название заметки и её картинки совпадают
-    public static synchronized Vector<Zametka> getZamLocal() throws FileNotFoundException
+    public static synchronized List<Zametka> getZamLocal() throws FileNotFoundException
     {
-        Vector<Zametka> vector = new Vector<>();
+        List<Zametka> list =new ArrayList<Zametka>();
 
         File folder = new File(root+folderForZametka);
 
 
         String[] listOfFiles;
-        if(folder.list() == null) return null;
+        if(folder.list() == null) return list;
         else {
-             listOfFiles = folder.list();
+            listOfFiles = folder.list();
         }
 
         File file;
@@ -248,15 +265,14 @@ public class LocalBase {
                 while (( len=bufferedReader.readLine() ) != null)
                     stringBuilder.append(len);
 
-                vector.add(deSerializationZametka(deCode(String.valueOf(stringBuilder))));
+                list.add(deSerializationZametka(deCode(String.valueOf(stringBuilder))));
                 fileInputStream.close();
 
             }catch (IOException | ClassNotFoundException e){
                 e.printStackTrace();
             }
         }
-
-        return vector;
+        return list;
     }
     //Получаем картинку по её имени
     public static synchronized Bitmap getBitmap(String name) throws FileNotFoundException {
@@ -283,6 +299,11 @@ public class LocalBase {
 
         bitmap = ZametkaWork.deSerializationBitmap(deCode(text));
         return bitmap;
+    }
+    //Получаем картинку по её имени
+    public static synchronized boolean chheckBitmap(String name) {
+        File file = new File(root+folderForImages+"/"+name+".txt");
+        return file.exists();
     }
 }
 

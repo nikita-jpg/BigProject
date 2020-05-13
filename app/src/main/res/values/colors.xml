@@ -6,4 +6,6 @@
     <color name="button">#80000000</color>
     <color name="button_txt_norm">#66636a</color>
     <color name="button_txt_pressed">#00ae23</color>
+
+    <color name="very_black">#000000</color>
 </resources>

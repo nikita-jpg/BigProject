@@ -1,22 +1,32 @@
 package com.example.bigproject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
-public class MainClass extends Activity {
+public class MainClass extends AppCompatActivity {
     private StaggeredGridLayoutManager gaggeredGridLayoutManager;
+    private List<Zametka> zametkaList = null;
+
     private void startService()
     {
         // узнаем размеры экрана из класса Display
@@ -32,62 +42,35 @@ public class MainClass extends Activity {
         intent.putExtra("heightForButton",heightForButton);
         startService(intent);
     }
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        LocalBase.initialization(this);
-        startService();
+    private void MakeRecycleViewAndAdapter() throws FileNotFoundException
+    {
+
+        zametkaList = LocalBase.getZamLocal();
+
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
 
-        gaggeredGridLayoutManager = new StaggeredGridLayoutManager(3, 1);
+        gaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
         recyclerView.setLayoutManager(gaggeredGridLayoutManager);
 
-        List<ItemObjects> gaggeredList = getListItemData();
-
-        SolventRecyclerViewAdapter rcAdapter = new SolventRecyclerViewAdapter(MainClass.this, gaggeredList);
+        SolventRecyclerViewAdapter rcAdapter = new SolventRecyclerViewAdapter(MainClass.this, zametkaList,recyclerView );
         recyclerView.setAdapter(rcAdapter);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        LocalBase.initialization(getApplicationContext());
+        startService();
+        try {
+            MakeRecycleViewAndAdapter();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
 
-        return super.onOptionsItemSelected(item);
     }
 
-    private List<ItemObjects> getListItemData(){
-        List<ItemObjects> listViewItems = new ArrayList<ItemObjects>();
-        listViewItems.add(new ItemObjects("Alkane", R.drawable.one));
-        listViewItems.add(new ItemObjects("Ethane", R.drawable.two));
-        listViewItems.add(new ItemObjects("Alkyne", R.drawable.three));
-        listViewItems.add(new ItemObjects("Benzene", R.drawable.four));
-        listViewItems.add(new ItemObjects("Amide", R.drawable.one));
-        listViewItems.add(new ItemObjects("Amino Acid", R.drawable.two));
-        listViewItems.add(new ItemObjects("Phenol", R.drawable.three));
-        listViewItems.add(new ItemObjects("Carbonxylic", R.drawable.four));
-        listViewItems.add(new ItemObjects("Nitril", R.drawable.one));
-        listViewItems.add(new ItemObjects("Ether", R.drawable.two));
-        listViewItems.add(new ItemObjects("Ester", R.drawable.three));
-        listViewItems.add(new ItemObjects("Alcohol", R.drawable.four));
-
-        return listViewItems;
-    }
 
 }
