@@ -68,7 +68,6 @@ public class ZametkaWork {
     }
 
 
-
     //Создаём и сохраняем заметку на телефоне
     //Если заметка была вызвана соханением картинки
     public void MakeAndSaveTextZam(String str)
