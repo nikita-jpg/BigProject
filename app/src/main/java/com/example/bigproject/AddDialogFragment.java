@@ -1,47 +1,55 @@
 package com.example.bigproject;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.fragment.app.DialogFragment;
 
 public class AddDialogFragment extends DialogFragment {
 
-    private Activity activity;
-    private AddDialogListener mListener;
+    private Button button;
+    private EditText zametkaName;
+    private EditText zametkaValue;
+    private Zametka zametka;
 
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.dialog_lay, null))
-                .setPositiveButton("ДОБАВИТЬ", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        
-                    }
-                });
-        return builder.create();
+    AddDialogFragment(Zametka zametka)
+    {
+        this.zametka=zametka;
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-        if (context instanceof Activity){
-            activity = (Activity) context;
-        }
+    // Inflate the layout to use as dialog or embedded fragment
+        View v = inflater.inflate(R.layout.dialog_lay, container, false);
 
-        try {
-             mListener = (AddDialogListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement AddDialogListener");
-        }
+        button= v.findViewById(R.id.button);
+        zametkaName = v.findViewById(R.id.zametka_name);
+        zametkaValue = v.findViewById(R.id.zametka_value);
+
+        zametkaName.setText(zametka.getName());
+        zametkaValue.setText(zametka.getValue());
+
+        button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                zametka.setName(zametkaName.getText().toString());
+                zametka.setValue(zametkaValue.getText().toString());
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LocalBase.save(zametka);
+                    }
+                });
+                thread.start();
+                v.setBackgroundColor(getContext().getResources().getColor(R.color.very_black));
+            }
+        });
+        return v;
     }
 }

@@ -1,7 +1,5 @@
 package com.example.bigproject;
 
-import android.graphics.Bitmap;
-
 import java.io.Serializable;
 
 public class Zametka implements Serializable {
@@ -9,12 +7,12 @@ public class Zametka implements Serializable {
     Zametka(){
         data = "";
         name = "";
-        text = "";
+        value = "";
         bitmap = "";
     }
 
 
-    private String data,name,text;
+    private String data,name, value;
     private String bitmap;
 
     public String getData() {
@@ -33,12 +31,12 @@ public class Zametka implements Serializable {
         this.name = name;
     }
 
-    public String getText() {
-        return text;
+    public String getValue() {
+        return value;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public String getBitmap() {

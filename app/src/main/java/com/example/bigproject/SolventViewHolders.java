@@ -1,8 +1,11 @@
 package com.example.bigproject;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,12 +15,13 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class SolventViewHolders extends RecyclerView.ViewHolder implements View.OnClickListener, AddDialogListener {
+public class SolventViewHolders extends RecyclerView.ViewHolder implements View.OnClickListener{
 
     public TextView countryName;
     public ImageView countryPhoto;
     public Zametka zametka;
     public Context context;
+    Button button;
 
     public SolventViewHolders(View itemView, Context context) {
         super(itemView);
@@ -31,12 +35,9 @@ public class SolventViewHolders extends RecyclerView.ViewHolder implements View.
     @Override
     public void onClick(View view) {
         Toast.makeText(view.getContext(), "Clicked Position = " + zametka.getData(), Toast.LENGTH_SHORT).show();
-        DialogFragment newFragment = new AddDialogFragment();
-        newFragment.show(((AppCompatActivity) context).getSupportFragmentManager(), "addDialog");
+        AddDialogFragment addDialogFragment = new AddDialogFragment(zametka);
+        addDialogFragment.show(((AppCompatActivity) context).getSupportFragmentManager(), "addDialog");
     }
 
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
 
-    }
 }

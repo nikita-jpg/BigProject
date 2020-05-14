@@ -195,7 +195,7 @@ public class LocalBase {
         return true;
     }
     //Сохраняем заметку в папку
-    public static synchronized boolean saveZamNotBtm(Zametka zametka)
+    private static synchronized boolean saveZamNotBtm(Zametka zametka)
     {
         zametka.setBitmap("");
         File file1 = new File(root + folderForZametka +"/"+ zametka.getData() + ".txt");

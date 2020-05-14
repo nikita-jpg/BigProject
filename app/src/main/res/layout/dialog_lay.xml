@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="wrap_content"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/alert_dialog"
     >
@@ -15,27 +16,30 @@
         >
 
         <EditText
-            android:id="@+id/dialog_titile"
+            android:id="@+id/zametka_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top|center"
-            android:text="Домашнее задание"
             android:textColor="@color/bkackText"
             android:layout_marginBottom="17dp"
             android:layout_marginTop="5dp"
             android:textSize="20dp"/>
 
-        <TextView
-            android:id="@+id/text_dz_alert"
+        <EditText
+            android:id="@+id/zametka_value"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="jdbvuiewhciuschewio"
-            android:hint="Ваше дз"
-            android:textColorHint="@color/bkackText"
+            android:textColor="@color/bkackText"
             android:layout_marginBottom="17dp"
             android:padding="4dp"
             />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button" />
 
     </LinearLayout>
 

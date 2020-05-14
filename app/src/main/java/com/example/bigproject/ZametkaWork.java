@@ -83,7 +83,7 @@ public class ZametkaWork {
                 zametka = makeZametka();
 
                 //Добавляем к заметке наш текст
-                zametka.setText(inf);
+                zametka.setValue(inf);
 
                 //Фото нет
                 zametka.setBitmap("");
@@ -111,7 +111,7 @@ public class ZametkaWork {
                 zametka = makeZametka();
 
                 //Раз мы сохраняем картинку,текста нет
-                zametka.setText("");
+                zametka.setValue("");
 
                 //Сериализуем фото
                 String bitmapStr = serializationBitmap(uri);
