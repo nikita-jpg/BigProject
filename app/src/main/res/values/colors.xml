@@ -14,4 +14,6 @@
     <color name="abs_white">#ffffff</color>
     <color name="transparent">#00000000</color>
     <color name="very_black">#000000</color>
+    <color name="dialog_gray">#262628</color>
+    <color name="hint_grey">#9d9ca2</color>
 </resources>

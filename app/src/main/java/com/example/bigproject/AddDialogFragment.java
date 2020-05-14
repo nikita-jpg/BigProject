@@ -1,5 +1,10 @@
 package com.example.bigproject;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +26,12 @@ public class AddDialogFragment extends DialogFragment {
         this.zametka=zametka;
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
     // Inflate the layout to use as dialog or embedded fragment
         View v = inflater.inflate(R.layout.dialog_lay, container, false);
@@ -47,7 +55,6 @@ public class AddDialogFragment extends DialogFragment {
                     }
                 });
                 thread.start();
-                v.setBackgroundColor(getContext().getResources().getColor(R.color.very_black));
             }
         });
         return v;
