@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+
 
 
     <EditText
@@ -33,7 +35,10 @@
         android:id="@+id/requestTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center" />
+        android:background="@color/bkackText"
+        android:gravity="center"
+        android:textColor="#F44336"
+        app:drawableTint="#F44336" />
 
     <LinearLayout
         android:layout_width="wrap_content"

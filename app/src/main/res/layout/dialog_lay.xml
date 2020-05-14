@@ -25,7 +25,7 @@
             android:textColorHint="@color/hint_grey"
             android:hint="Название"
             android:textSize="20dp"
-            android:backgroundTint="@color/very_black"/>
+            android:backgroundTint="@color/transparent"/>
 
         <EditText
             android:id="@+id/zametka_value"
@@ -43,13 +43,20 @@
 
         <Button
             android:id="@+id/button"
-            android:layout_width="77dp"
-            android:layout_height="37dp"
-            android:layout_marginLeft="210dp"
-            android:layout_marginRight="10dp"
+            android:layout_width="78dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="219dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="2dp"
             android:backgroundTint="@color/blue"
+            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="Save"
             android:textColor="@color/abs_white"
-            android:text="Save" />
+            android:textSize="12sp"
+            app:cornerRadius="15dp"
+            app:elevation="0dp" />
 
     </LinearLayout>
 
