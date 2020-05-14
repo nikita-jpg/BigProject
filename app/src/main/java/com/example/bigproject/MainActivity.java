@@ -191,8 +191,6 @@ public class MainActivity extends AppCompatActivity {
         intent = new Intent(MainActivity.this,Autorization.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-
-
         /*
         String root = String.valueOf(getFilesDir());
         File file = new File(root+"/folder/15.txt");

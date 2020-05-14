@@ -33,7 +33,7 @@ public class SolventRecyclerViewAdapter  extends RecyclerView.Adapter<SolventVie
     @Override
     public SolventViewHolders onCreateViewHolder(ViewGroup parent, int viewType) {
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.zametka_list, null);
-        SolventViewHolders rcv = new SolventViewHolders(layoutView);
+        SolventViewHolders rcv = new SolventViewHolders(layoutView,context);
         return rcv;
     }
 

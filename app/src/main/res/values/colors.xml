@@ -7,5 +7,11 @@
     <color name="button_txt_norm">#66636a</color>
     <color name="button_txt_pressed">#00ae23</color>
 
+    <color name="btnTaped">#40B446</color>
+    <color name="btn">#edeef0</color>
+    <color name="bkackText">#000002</color>
+    <color name="blue">#6076fd</color>
+    <color name="abs_white">#ffffff</color>
+    <color name="transparent">#00000000</color>
     <color name="very_black">#000000</color>
 </resources>
