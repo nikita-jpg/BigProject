@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 
@@ -55,6 +56,8 @@ public class AddDialogFragment extends DialogFragment {
                     }
                 });
                 thread.start();
+                Toast.makeText(v.getContext(), "Saved", Toast.LENGTH_SHORT).show();
+                dismiss();
             }
         });
         return v;

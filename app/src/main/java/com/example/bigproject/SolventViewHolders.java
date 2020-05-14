@@ -34,7 +34,6 @@ public class SolventViewHolders extends RecyclerView.ViewHolder implements View.
 
     @Override
     public void onClick(View view) {
-        Toast.makeText(view.getContext(), "Clicked Position = " + zametka.getData(), Toast.LENGTH_SHORT).show();
         AddDialogFragment addDialogFragment = new AddDialogFragment(zametka);
         addDialogFragment.show(((AppCompatActivity) context).getSupportFragmentManager(), "addDialog");
     }
