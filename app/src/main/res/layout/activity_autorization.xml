@@ -1,40 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:gravity="center"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+
 
     <EditText
         android:id="@+id/loginText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:ems="10"
+        android:gravity="center"
         android:hint="@string/login_hint"
+        android:backgroundTint="@color/blue"
         android:inputType="textPersonName" />
+
 
     <EditText
         android:id="@+id/passwordText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:ems="10"
+        android:gravity="center"
         android:hint="@string/password_hind"
+        android:backgroundTint="@color/blue"
         android:inputType="textPersonName" />
 
-    <Button
-        android:id="@+id/enterBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/enter_Btn_text"/>
-
-    <Button
-        android:id="@+id/regBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/reg_Btn_text" />
 
     <TextView
         android:id="@+id/requestTextView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:gravity="center" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/regBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="10dp"
+            android:backgroundTint="@color/blue"
+            android:textColor="@color/abs_white"
+            android:text="@string/reg_Btn_text" />
+
+        <Button
+            android:id="@+id/enterBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="60dp"
+            android:backgroundTint="@color/blue"
+            android:textColor="@color/abs_white"
+            android:text="@string/enter_Btn_text" />
+
+    </LinearLayout>
+
 </LinearLayout>

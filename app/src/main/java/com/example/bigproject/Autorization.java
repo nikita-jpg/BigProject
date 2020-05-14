@@ -80,8 +80,9 @@ public class Autorization extends Activity implements View.OnClickListener {
     }
 
     //Выводим сообщение для пользователя
-    private void requestToUser(String request)
+    private void requestToUser(String request,int color)
     {
+        requestTextView.setTextColor(color);
         requestTextView.setText(request);
     }
 
@@ -133,12 +134,12 @@ public class Autorization extends Activity implements View.OnClickListener {
                     case -1:
                         enterBtn.setClickable(true);
                         regBtn.setClickable(true);
-                        requestToUser(getString(R.string.request_minus_1));
+                        requestToUser(getString(R.string.request_minus_1),R.color.red);
                         break;
                     case 0:
                         enterBtn.setClickable(true);
                         regBtn.setClickable(true);
-                        requestToUser(getString(R.string.request_0));
+                        requestToUser(getString(R.string.request_0),R.color.red);
                         break;
                     case 1:
                         startMainClass();
@@ -146,19 +147,19 @@ public class Autorization extends Activity implements View.OnClickListener {
                     case 2:
                         enterBtn.setClickable(true);
                         regBtn.setClickable(true);
-                        requestToUser(getString(R.string.request_2));
+                        requestToUser(getString(R.string.request_2),R.color.red);
                         break;
                 }
             }
         };
 
         Runnable runnable = null;
-        if(login.length()<8 || password.length()<8) requestToUser(getString(R.string.small_login_or_password));
+        if(login.length()<8 || password.length()<8) requestToUser(getString(R.string.small_login_or_password),R.color.red);
         else
         {
             enterBtn.setClickable(false);
             regBtn.setClickable(false);
-            requestToUser(getString(R.string.waiting_srver_request));
+            requestToUser(getString(R.string.waiting_srver_request),R.color.red);
             //Если пользователь нажал "войти"
             if (v.getId() == R.id.enterBtn)
             {

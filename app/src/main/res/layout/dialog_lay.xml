@@ -48,9 +48,8 @@
             android:layout_marginLeft="210dp"
             android:layout_marginRight="10dp"
             android:backgroundTint="@color/blue"
-            android:text="Save"
             android:textColor="@color/abs_white"
-            app:iconPadding="8dp" />
+            android:text="Save" />
 
     </LinearLayout>
 
