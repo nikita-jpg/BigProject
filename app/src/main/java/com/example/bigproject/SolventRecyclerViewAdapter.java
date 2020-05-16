@@ -73,7 +73,7 @@ public class SolventRecyclerViewAdapter  extends RecyclerView.Adapter<SolventVie
         else
         {
             holder.countryPhoto.setVisibility(View.GONE);
-            holder.countryName.setText(itemList.get(position).getValue());
+            holder.countryName.setText(itemList.get(position).getName());
         }
 
     }

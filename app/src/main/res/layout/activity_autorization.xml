@@ -35,10 +35,9 @@
         android:id="@+id/requestTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/bkackText"
+        android:background="@color/transparent"
         android:gravity="center"
-        android:textColor="#F44336"
-        app:drawableTint="#F44336" />
+        android:textColor="#F44336" />
 
     <LinearLayout
         android:layout_width="wrap_content"

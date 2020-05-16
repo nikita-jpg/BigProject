@@ -239,6 +239,19 @@ public class LocalBase {
     }
 
 
+    /* Удаление */
+    public static synchronized void deleteZam(String data)
+    {
+        File fileZam = new File(root + folderForZametka + "/" + data + ".txt");
+        fileZam.delete();
+        File fileImage = new File(root + folderForImages + "/" + data + ".txt");
+        fileImage.delete();
+        updateUI();
+    }
+
+
+
+
     /* Получаем данные */
     //Получаем вектор,содержащий все заметки в памяти устройства. Название заметки и её картинки совпадают
     public static synchronized List<Zametka> getZamLocal() throws FileNotFoundException
@@ -280,7 +293,6 @@ public class LocalBase {
     }
     //Получаем картинку по её имени
     public static synchronized Bitmap getBitmap(String name) throws FileNotFoundException {
-        File file = new File(root+folderForImages+"/"+name);
         Bitmap bitmap = null;
         StringBuilder stringBuilder = new StringBuilder();
         String len = "";

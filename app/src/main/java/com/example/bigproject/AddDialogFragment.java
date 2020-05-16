@@ -1,8 +1,5 @@
 package com.example.bigproject;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -17,7 +14,7 @@ import androidx.fragment.app.DialogFragment;
 
 public class AddDialogFragment extends DialogFragment {
 
-    private Button button;
+    private Button buttonSave,buttonDelete;
     private EditText zametkaName;
     private EditText zametkaValue;
     private Zametka zametka;
@@ -37,14 +34,34 @@ public class AddDialogFragment extends DialogFragment {
     // Inflate the layout to use as dialog or embedded fragment
         View v = inflater.inflate(R.layout.dialog_lay, container, false);
 
-        button= v.findViewById(R.id.button);
+        buttonSave= v.findViewById(R.id.button_save);
+        buttonDelete= v.findViewById(R.id.button_delete);
+
         zametkaName = v.findViewById(R.id.zametka_name);
         zametkaValue = v.findViewById(R.id.zametka_value);
 
         zametkaName.setText(zametka.getName());
         zametkaValue.setText(zametka.getValue());
 
-        button.setOnClickListener(new View.OnClickListener(){
+
+
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LocalBase.deleteZam(zametka.getData());
+                    }
+                });
+                thread.start();
+                Toast.makeText(v.getContext(), "Deleted", Toast.LENGTH_SHORT).show();
+                dismiss();
+            }
+        });
+
+
+        buttonSave.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 zametka.setName(zametkaName.getText().toString());
