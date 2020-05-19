@@ -19,8 +19,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 
 public class Autorization extends Activity implements View.OnClickListener {
@@ -176,10 +180,17 @@ public class Autorization extends Activity implements View.OnClickListener {
             else
             {
                 runnable = new Runnable() {
+                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void run() {
                         Message message = new Message();
-                        message.arg1 = serverWork.registerServer(login,password);
+                        try {
+                            message.arg1 = serverWork.registerServer(login,password);
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
+                        } catch (InvalidKeySpecException e) {
+                            e.printStackTrace();
+                        }
                         handler.sendMessage(message);
                     }
                 };
