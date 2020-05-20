@@ -13,6 +13,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -111,13 +113,16 @@ public class Autorization extends Activity implements View.OnClickListener {
 
             enterBtn.setOnClickListener(this);
             regBtn.setOnClickListener(this);
-        }
 
+        }
 
     }
 
     @Override
     public void onClick(View v) {
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
         final ServerWork serverWork = new ServerWork(getApplicationContext());
         final String login = loginText.getText().toString();
@@ -180,11 +185,6 @@ public class Autorization extends Activity implements View.OnClickListener {
             Thread thread = new Thread(runnable);
             thread.start();
         }
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
     }
 
     @Override

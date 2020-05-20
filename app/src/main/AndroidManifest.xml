@@ -22,7 +22,10 @@
             android:enabled="true"
             android:exported="true"></service>
 
-        <activity android:name=".Autorization"></activity>
+        <activity android:name=".Autorization"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
+        
         <activity android:name=".MainClass">
         </activity>
         <activity android:name=".MainActivity">

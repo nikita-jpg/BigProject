@@ -68,6 +68,7 @@ public class ServerWork {
         //Делаем запрос
         try {
             req = request.execute().body();
+            if(req == null) return 0;
             String[] requests = req.split(":");
             //Проверяем код ответа сервера
             if(!requests[0].equals("1"))

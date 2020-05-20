@@ -57,6 +57,7 @@
             android:text="@string/reg_Btn_text" />
 
         <Button
+            android:imeOptions="actionDone"
             android:id="@+id/enterBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
