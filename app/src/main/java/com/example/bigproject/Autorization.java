@@ -23,9 +23,6 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-
 
 public class Autorization extends Activity implements View.OnClickListener {
 
@@ -96,6 +93,7 @@ public class Autorization extends Activity implements View.OnClickListener {
 
         //Получаем разрешение на чтение из галереи и отображение поверх экрана
         SetPermission();
+        LocalBase.initialization(getApplicationContext());
 
         //Проверяем,был ли человек уже авторизован
         if(checkAutorization())
@@ -121,7 +119,7 @@ public class Autorization extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        final ServerWork serverWork = new ServerWork();
+        final ServerWork serverWork = new ServerWork(getApplicationContext());
         final String login = loginText.getText().toString();
         final String password = passwordText.getText().toString();
 
@@ -133,25 +131,24 @@ public class Autorization extends Activity implements View.OnClickListener {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
+                enterBtn.setClickable(true);
+                regBtn.setClickable(true);
                 switch (msg.arg1)
                 {
                     case -1:
-                        enterBtn.setClickable(true);
-                        regBtn.setClickable(true);
                         requestToUser(getString(R.string.request_minus_1),R.color.red);
                         break;
                     case 0:
-                        enterBtn.setClickable(true);
-                        regBtn.setClickable(true);
                         requestToUser(getString(R.string.request_0),R.color.red);
                         break;
                     case 1:
                         startMainClass();
                         break;
                     case 2:
-                        enterBtn.setClickable(true);
-                        regBtn.setClickable(true);
                         requestToUser(getString(R.string.request_2),R.color.red);
+                        break;
+                    case 3:
+                        requestToUser(getString(R.string.request_3),R.color.red);
                         break;
                 }
             }
@@ -164,37 +161,22 @@ public class Autorization extends Activity implements View.OnClickListener {
             enterBtn.setClickable(false);
             regBtn.setClickable(false);
             requestToUser(getString(R.string.waiting_srver_request),R.color.red);
-            //Если пользователь нажал "войти"
-            if (v.getId() == R.id.enterBtn)
-            {
-                 runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        Message message = new Message();
-                        message.arg1 = serverWork.checkAutorizationServer(login,password);
-                        handler.sendMessage(message);
-                    }
-                };
-            }
-            //Если пользователь нажал "регистрация"
+            final int regOrAut;
+
+            if(v.getId() == R.id.regBtn)
+                regOrAut = 1;
             else
-            {
-                runnable = new Runnable() {
-                    @RequiresApi(api = Build.VERSION_CODES.O)
-                    @Override
-                    public void run() {
-                        Message message = new Message();
-                        try {
-                            message.arg1 = serverWork.registerServer(login,password);
-                        } catch (NoSuchAlgorithmException e) {
-                            e.printStackTrace();
-                        } catch (InvalidKeySpecException e) {
-                            e.printStackTrace();
-                        }
-                        handler.sendMessage(message);
-                    }
-                };
-            }
+                regOrAut = 2;
+            runnable = new Runnable() {
+                @RequiresApi(api = Build.VERSION_CODES.O)
+                @Override
+                public void run() {
+                    Message message = new Message();
+                    message.arg1 = serverWork.regAutServer(login,password,regOrAut);
+                    handler.sendMessage(message);
+                }
+            };
+
             Thread thread = new Thread(runnable);
             thread.start();
         }

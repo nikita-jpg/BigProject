@@ -10,4 +10,5 @@
     <string name="request_0">Сервер не доуступен</string>
     <string name="request_1">Успех</string>
     <string name="request_2">Логин уже занят</string>
+    <string name="request_3">Логин уже занят</string>
 </resources>

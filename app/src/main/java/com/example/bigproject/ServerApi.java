@@ -11,11 +11,12 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public interface RegistrationApi {
-    @POST( "reg/getPublicKeyForReg")
-    Call<String> getPublicKeyForReg();
+public interface ServerApi {
 
-    @POST( "reg/regPerson")
-    Call<String[]> regPerson(@Body String[] arr);
+    @POST( "/regPerson")
+    Call<String> regPerson(@Query(value = "login") String login,@Query(value = "password") String password);
+
+    @POST( "/autPerson")
+    Call<String> autPerson(@Query(value = "login") String login,@Query(value = "password") String password);
 
 }

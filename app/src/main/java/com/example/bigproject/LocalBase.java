@@ -55,10 +55,12 @@ public class LocalBase {
 
 
     /* Инициализация важных переменных из config.propirties */
-    public static void initialization(Context contextArg, android.os.Handler handlerArg)
+    public static void setHandler(android.os.Handler handlerArg){
+        handler = handlerArg;
+    }
+    public static void initialization(Context contextArg)
     {
         context = contextArg;
-        handler = handlerArg;
         root = String.valueOf(context.getFilesDir());
         Properties properties = new Properties();
         AssetManager assetManager = context.getAssets();

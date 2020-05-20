@@ -91,7 +91,7 @@ public class MainClass extends AppCompatActivity {
             }
         };
 
-        LocalBase.initialization(getApplicationContext(),handler);
+        LocalBase.setHandler(handler);
         startService();
         try {
             MakeRecycleViewAndAdapter();
