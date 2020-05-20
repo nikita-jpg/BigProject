@@ -47,7 +47,7 @@ public class ServerWork {
         return 0;
     }
 
-    public int regAutServer(String login, String password, int regOrAut)
+    public int regAutServer(String login, String password, String regOrAut)
     {
         //Готовим запрос
         Gson gson = new GsonBuilder()
@@ -59,7 +59,7 @@ public class ServerWork {
                 .build();
         ServerApi registrationApi = retrofit.create(ServerApi.class);
         Call<String> request;
-        if(regOrAut == 1)
+        if(regOrAut.equals("reg"))
             request = registrationApi.regPerson(login,password);
         else
             request = registrationApi.autPerson(login,password);
@@ -68,7 +68,7 @@ public class ServerWork {
         //Делаем запрос
         try {
             req = request.execute().body();
-            String[] requests = req.split(",");
+            String[] requests = req.split(":");
             //Проверяем код ответа сервера
             if(!requests[0].equals("1"))
                 return Integer.parseInt(requests[0]);

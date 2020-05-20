@@ -161,12 +161,12 @@ public class Autorization extends Activity implements View.OnClickListener {
             enterBtn.setClickable(false);
             regBtn.setClickable(false);
             requestToUser(getString(R.string.waiting_srver_request),R.color.red);
-            final int regOrAut;
+            final String regOrAut;
 
             if(v.getId() == R.id.regBtn)
-                regOrAut = 1;
+                regOrAut = "reg";
             else
-                regOrAut = 2;
+                regOrAut = "aut";
             runnable = new Runnable() {
                 @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
@@ -180,7 +180,6 @@ public class Autorization extends Activity implements View.OnClickListener {
             Thread thread = new Thread(runnable);
             thread.start();
         }
-
     }
 
     @Override
