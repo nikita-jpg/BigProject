@@ -51,7 +51,7 @@ public class ZametkaWork {
 
         return Base64.encodeToString(byteArrayOutputStream.toByteArray(),0);
     }
-    private Zametka makeZametka()
+    public static Zametka makeZametka()
     {
         Zametka zametka = new Zametka();
 

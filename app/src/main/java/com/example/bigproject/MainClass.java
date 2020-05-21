@@ -63,7 +63,7 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
         //Floating Action Buttons
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab1 = (FloatingActionButton) findViewById(R.id.fab_exit);
-        fab2 = (FloatingActionButton) findViewById(R.id.fab_2);
+        fab2 = (FloatingActionButton) findViewById(R.id.create_zam);
         fab3 = (FloatingActionButton) findViewById(R.id.fab_3);
 
         //Animations
@@ -229,13 +229,22 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
                 exit();
                 Toast.makeText(getApplication(), "Floating Action Button 1", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.fab_2:
+            case R.id.create_zam:
+                makeZam();
                 Toast.makeText(getApplication(), "Floating Action Button 2", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.fab_3:
                 Toast.makeText(getApplication(), "Floating Action Button 3", Toast.LENGTH_SHORT).show();
                 break;
         }
+    }
+
+
+    private void makeZam()
+    {
+        Zametka zametka = ZametkaWork.makeZametka();
+        AddDialogFragment addDialogFragment = new AddDialogFragment(zametka);
+        addDialogFragment.show(( this).getSupportFragmentManager(), "addDialog");
     }
 
     //Выходим из аккаунта
@@ -245,7 +254,6 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
         Intent intent = new Intent(this,MyService.class);
         stopService(intent);
         LocalBase.deleteBase();
-        exit();
 
         SharedPreferences sharedPreferences = this.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -254,9 +262,6 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
 
         this.finish();
     }
-
-
-
 
 
     @Override
