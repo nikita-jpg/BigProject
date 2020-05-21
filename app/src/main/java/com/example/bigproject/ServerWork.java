@@ -8,8 +8,11 @@ import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.security.PublicKey;
+import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -24,27 +27,6 @@ public class ServerWork {
 
     ServerWork(Context context){
         this.context = context;
-    }
-
-    //Получаем от сервера публичный ключ
-    private PublicKey getPublickKeyForAutorization()
-    {
-        return null;
-    }
-
-    public int autServer(String login, String password){
-        //Готовим запрос
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(defaultHost)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-        ServerApi registrationApi = retrofit.create(ServerApi.class);
-        Call<String> request = registrationApi.regPerson(login,password);
-        String req;
-        return 0;
     }
 
     public int regAutServer(String login, String password, String regOrAut)

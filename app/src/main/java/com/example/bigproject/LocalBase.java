@@ -330,5 +330,12 @@ public class LocalBase {
         Message message = new Message();
         handler.sendMessage(message);
     }
+
+    public static void exitBase()
+    {
+
+    }
+
+
 }
 

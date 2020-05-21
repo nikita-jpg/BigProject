@@ -33,6 +33,7 @@ public class MyService extends Service implements View.OnTouchListener {
     private int widthForButton = 0;
     private int heightForButton = 0;
     private Button mButton;
+    private boolean cycle = true;
 
     private WindowManager.LayoutParams params;
     private WindowManager wm;
@@ -45,7 +46,7 @@ public class MyService extends Service implements View.OnTouchListener {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void run() {
-                while (true) {
+                while (cycle) {
                     try
                     {
                         if (gallaryAndBuffer.getImageLaster(date) != null) {
@@ -132,6 +133,7 @@ public class MyService extends Service implements View.OnTouchListener {
                 } else deleteBtn();
             }
         };
+
     }
 
     @Override
@@ -172,6 +174,7 @@ public class MyService extends Service implements View.OnTouchListener {
     }
 
     public void onDestroy() {
+        cycle = false;
         this.stopThread();
         super.onDestroy();
     }
@@ -186,7 +189,6 @@ public class MyService extends Service implements View.OnTouchListener {
         if(message.substring(message.indexOf("|")+1,message.length()).equals("Uri"))
             zametka.MakeAndSaveImageZam(Uri.parse(message.substring(0,message.indexOf("|"))));
         else zametka.MakeAndSaveTextZam(message);
-
         return false;
     }
 
