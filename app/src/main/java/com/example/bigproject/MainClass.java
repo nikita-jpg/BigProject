@@ -148,8 +148,8 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
     {
 
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fabCreateZam.getLayoutParams();
-        //layoutParams.rightMargin += (int) (fabCreateZam.getWidth() * 1.3);
-        //layoutParams.bottomMargin += (int) (fabCreateZam.getHeight() * 1.5);
+        layoutParams.rightMargin += (int) (fabCreateZam.getWidth() * 0.1);
+        layoutParams.bottomMargin += (int) (fabCreateZam.getHeight() * 2.5);
         fabCreateZam.setLayoutParams(layoutParams);
         fabCreateZam.startAnimation(show_fab_1);
         fabCreateZam.setClickable(true);
@@ -157,8 +157,8 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
 
 
         FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) fabExit.getLayoutParams();
-        //layoutParams2.rightMargin += (int) (fabExit.getWidth() * 1.7);
-        layoutParams2.bottomMargin += (int) (fabExit.getHeight() * 0.25);
+        layoutParams2.rightMargin += (int) (fabExit.getWidth() * 0.1);
+        layoutParams2.bottomMargin += (int) (fabExit.getHeight() * 1.3);
         fabExit.setLayoutParams(layoutParams2);
         fabExit.startAnimation(show_fab_2);
         fabExit.setClickable(true);
@@ -170,16 +170,16 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
     {
 
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fabCreateZam.getLayoutParams();
-        //layoutParams.rightMargin -= (int) (fabCreateZam.getWidth() * 1.3);
-        //layoutParams.bottomMargin -= (int) (fabCreateZam.getHeight() * 1.5);
+        layoutParams.rightMargin -= (int) (fabCreateZam.getWidth() * 0.1);
+        layoutParams.bottomMargin -= (int) (fabCreateZam.getHeight() * 2.5);
         fabCreateZam.setLayoutParams(layoutParams);
         fabCreateZam.startAnimation(hide_fab_1);
         fabCreateZam.setClickable(false);
 
 
         FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) fabExit.getLayoutParams();
-        //layoutParams2.rightMargin -= (int) (fabExit.getWidth() * 1.7);
-        layoutParams2.bottomMargin -= (int) (fabExit.getHeight() * 0.25);
+        layoutParams2.rightMargin -= (int) (fabExit.getWidth() * 0.1);
+        layoutParams2.bottomMargin -= (int) (fabExit.getHeight() * 1.3);
         fabExit.setLayoutParams(layoutParams2);
         fabExit.startAnimation(hide_fab_2);
         fabExit.setClickable(false);

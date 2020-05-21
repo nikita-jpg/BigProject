@@ -5,11 +5,11 @@
     <!--Move-->
     <translate
         android:duration="500"
-        android:fromYDelta="0%"
-        android:fromXDelta="-10%"
+        android:fromYDelta="250%"
+        android:fromXDelta="10%"
         android:interpolator="@android:anim/linear_interpolator"
-        android:toXDelta="-10%"
-        android:toYDelta="-250%"></translate>
+        android:toXDelta="0"
+        android:toYDelta="0"></translate>
 
 
 </set>
