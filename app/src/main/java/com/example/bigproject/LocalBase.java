@@ -225,19 +225,19 @@ public class LocalBase {
         //zametka.setUri("");
 
         //Если заметка содержит картинку и нам удалось её сохранить, то идём сохранять текст
-        if(!zametka.getBitmap().equals("") && saveStrBitmap(zametka.getData(), zametka.getBitmap()))
+        if(!zametka.getBitmap().equals(""))
         {
-            //Если удалось сохранить текст
-            if(saveZamNotBtm(zametka))
-            {
-                //Если в заметке был uri, то обновлять UI не нужно
-                updateUI();
-                return true;
-            }
+            if (saveStrBitmap(zametka.getData(), zametka.getBitmap()))
+                if(saveZamNotBtm(zametka))
+                {
+                    updateUI();
+                    return true;
+                }
+                else
+                    return false;
             else
                 return false;
-        }else
-        {
+        }else {
             if(saveZamNotBtm(zametka))
             {
                 updateUI();
