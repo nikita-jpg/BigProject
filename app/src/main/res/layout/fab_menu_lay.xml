@@ -23,13 +23,4 @@
         android:visibility="invisible"
         app:fabSize="mini" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        app:backgroundTint="@color/abs_white"
-        android:src="@android:drawable/ic_menu_share"
-        android:visibility="invisible"
-        app:fabSize="mini" />
 </FrameLayout>

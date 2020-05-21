@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -36,10 +35,9 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
 
     //FAB
     private FloatingActionButton fab;
-    private FloatingActionButton fab1;
-    private FloatingActionButton fab2;
+    private FloatingActionButton fabExit;
+    private FloatingActionButton fabCreateZam;
     private FloatingActionButton fab3;
-    private CoordinatorLayout rootLayout;
 
 
     //Save the FAB's active status
@@ -52,35 +50,26 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
     private Animation hide_fab_1;
     private Animation show_fab_2;
     private Animation hide_fab_2;
-    private Animation show_fab_3;
-    private Animation hide_fab_3;
 
     /*Тут происходит запуск основных структур приложения */
     private void inicialization()
     {
-        rootLayout = (CoordinatorLayout) findViewById(R.id.coordinator_lay);
 
         //Floating Action Buttons
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab1 = (FloatingActionButton) findViewById(R.id.fab_exit);
-        fab2 = (FloatingActionButton) findViewById(R.id.create_zam);
-        fab3 = (FloatingActionButton) findViewById(R.id.fab_3);
+        fabExit = (FloatingActionButton) findViewById(R.id.fab_exit);
+        fabCreateZam = (FloatingActionButton) findViewById(R.id.create_zam);
 
         //Animations
         show_fab_1 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab1_show);
         hide_fab_1 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab1_hide);
         show_fab_2 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab2_show);
         hide_fab_2 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab2_hide);
-        show_fab_3 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab3_show);
-        hide_fab_3 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab3_hide);
 
 
         fab.setOnClickListener(this);
-        fab1.setOnClickListener(this);
-        fab2.setOnClickListener(this);
-        fab3.setOnClickListener(this);
-        fab2.setOnClickListener(this);
-        fab3.setOnClickListener(this);
+        fabExit.setOnClickListener(this);
+        fabCreateZam.setOnClickListener(this);
     }
 
     private void startService()
@@ -156,28 +145,21 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
     {
 
         //Floating Action Button 1
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fab1.getLayoutParams();
-        layoutParams.rightMargin += (int) (fab1.getWidth() * 1.7);
-        layoutParams.bottomMargin += (int) (fab1.getHeight() * 0.25);
-        fab1.setLayoutParams(layoutParams);
-        fab1.startAnimation(show_fab_1);
-        fab1.setClickable(true);
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fabExit.getLayoutParams();
+        layoutParams.rightMargin += (int) (fabExit.getWidth() * 1.7);
+        layoutParams.bottomMargin += (int) (fabExit.getHeight() * 0.3);
+        fabExit.setLayoutParams(layoutParams);
+        fabExit.startAnimation(show_fab_1);
+        fabExit.setClickable(true);
 
         //Floating Action Button 2
-        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) fab2.getLayoutParams();
-        layoutParams2.rightMargin += (int) (fab2.getWidth() * 1.5);
-        layoutParams2.bottomMargin += (int) (fab2.getHeight() * 1.5);
-        fab2.setLayoutParams(layoutParams2);
-        fab2.startAnimation(show_fab_2);
-        fab2.setClickable(true);
+        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) fabCreateZam.getLayoutParams();
+        layoutParams2.rightMargin += (int) (fabCreateZam.getWidth() * 0.9);
+        layoutParams2.bottomMargin += (int) (fabCreateZam.getHeight() * 1.5);
+        fabCreateZam.setLayoutParams(layoutParams2);
+        fabCreateZam.startAnimation(show_fab_2);
+        fabCreateZam.setClickable(true);
 
-        //Floating Action Button 3
-        FrameLayout.LayoutParams layoutParams3 = (FrameLayout.LayoutParams) fab3.getLayoutParams();
-        layoutParams3.rightMargin += (int) (fab3.getWidth() * 0.25);
-        layoutParams3.bottomMargin += (int) (fab3.getHeight() * 1.7);
-        fab3.setLayoutParams(layoutParams3);
-        fab3.startAnimation(show_fab_3);
-        fab3.setClickable(true);
     }
 
     //Скрыть меню FAB
@@ -185,28 +167,20 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
     {
 
         //Floating Action Button 1
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fab1.getLayoutParams();
-        layoutParams.rightMargin -= (int) (fab1.getWidth() * 1.7);
-        layoutParams.bottomMargin -= (int) (fab1.getHeight() * 0.25);
-        fab1.setLayoutParams(layoutParams);
-        fab1.startAnimation(hide_fab_1);
-        fab1.setClickable(false);
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fabExit.getLayoutParams();
+        layoutParams.rightMargin -= (int) (fabExit.getWidth() * 1.7);
+        layoutParams.bottomMargin -= (int) (fabExit.getHeight() * 0.25);
+        fabExit.setLayoutParams(layoutParams);
+        fabExit.startAnimation(hide_fab_1);
+        fabExit.setClickable(false);
 
         //Floating Action Button 2
-        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) fab2.getLayoutParams();
-        layoutParams2.rightMargin -= (int) (fab2.getWidth() * 1.5);
-        layoutParams2.bottomMargin -= (int) (fab2.getHeight() * 1.5);
-        fab2.setLayoutParams(layoutParams2);
-        fab2.startAnimation(hide_fab_2);
-        fab2.setClickable(false);
-
-        //Floating Action Button 3
-        FrameLayout.LayoutParams layoutParams3 = (FrameLayout.LayoutParams) fab3.getLayoutParams();
-        layoutParams3.rightMargin -= (int) (fab3.getWidth() * 0.25);
-        layoutParams3.bottomMargin -= (int) (fab3.getHeight() * 1.7);
-        fab3.setLayoutParams(layoutParams3);
-        fab3.startAnimation(hide_fab_3);
-        fab3.setClickable(false);
+        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) fabCreateZam.getLayoutParams();
+        layoutParams2.rightMargin -= (int) (fabCreateZam.getWidth() * 1.5);
+        layoutParams2.bottomMargin -= (int) (fabCreateZam.getHeight() * 1.5);
+        fabCreateZam.setLayoutParams(layoutParams2);
+        fabCreateZam.startAnimation(hide_fab_2);
+        fabCreateZam.setClickable(false);
     }
 
     @Override
@@ -233,12 +207,8 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
                 makeZam();
                 Toast.makeText(getApplication(), "Floating Action Button 2", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.fab_3:
-                Toast.makeText(getApplication(), "Floating Action Button 3", Toast.LENGTH_SHORT).show();
-                break;
         }
     }
-
 
     private void makeZam()
     {
