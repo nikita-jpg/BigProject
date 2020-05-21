@@ -3,17 +3,19 @@ package com.example.bigproject;
 import java.io.Serializable;
 
 public class Zametka implements Serializable {
+    private String data,name, value,uri;
+    private String bitmap;
 
     Zametka(){
         data = "";
         name = "";
         value = "";
         bitmap = "";
+        uri = "";
     }
 
 
-    private String data,name, value;
-    private String bitmap;
+
 
     public String getData() {
         return data;
@@ -45,6 +47,14 @@ public class Zametka implements Serializable {
 
     public void setBitmap(String bitmap) {
         this.bitmap = bitmap;
+    }
+
+    public void setUri(String uri){
+        this.uri = uri;
+    }
+
+    public String getUri(){
+        return uri;
     }
 
 

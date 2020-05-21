@@ -21,7 +21,6 @@ public class SolventViewHolders extends RecyclerView.ViewHolder implements View.
     public ImageView countryPhoto;
     public Zametka zametka;
     public Context context;
-    Button button;
 
     public SolventViewHolders(View itemView, Context context) {
         super(itemView);
@@ -31,10 +30,9 @@ public class SolventViewHolders extends RecyclerView.ViewHolder implements View.
         countryPhoto =  itemView.findViewById(R.id.country_photo);
     }
 
-
     @Override
     public void onClick(View view) {
-        AddDialogFragment addDialogFragment = new AddDialogFragment(zametka);
+        AddDialogFragment addDialogFragment = new AddDialogFragment(zametka,context);
         addDialogFragment.show(((AppCompatActivity) context).getSupportFragmentManager(), "addDialog");
     }
 

@@ -177,7 +177,7 @@ public class LocalBase {
 
     /* Сохранение данныых на устройстве */
     //Сохраняем картинку в папку
-    private static synchronized boolean saveStrBitmap(String name, String strBtm)
+    public static synchronized boolean saveStrBitmap(String name, String strBtm)
     {
         if(strBtm.length() == 0) return false;
 
@@ -200,7 +200,7 @@ public class LocalBase {
         return true;
     }
     //Сохраняем заметку в папку
-    private static synchronized boolean saveZamNotBtm(Zametka zametka)
+    public static synchronized boolean saveZamNotBtm(Zametka zametka)
     {
         zametka.setBitmap("");
         File file1 = new File(root + folderForZametka +"/"+ zametka.getData() + ".txt");
@@ -219,19 +219,25 @@ public class LocalBase {
     }
     public static synchronized boolean save(Zametka zametka)
     {
-        if(!zametka.getBitmap().equals(""))
+        //Проверяем, содержит ли заметка uri
+       // boolean haveUri = false;
+        //if(!zametka.getUri().equals("")) haveUri = true;
+        //zametka.setUri("");
+
+        //Если заметка содержит картинку и нам удалось её сохранить, то идём сохранять текст
+        if(!zametka.getBitmap().equals("") && saveStrBitmap(zametka.getData(), zametka.getBitmap()))
         {
-            if (saveStrBitmap(zametka.getData(), zametka.getBitmap()))
-                if(saveZamNotBtm(zametka))
-                {
-                    updateUI();
-                    return true;
-                }
-                else
-                    return false;
+            //Если удалось сохранить текст
+            if(saveZamNotBtm(zametka))
+            {
+                //Если в заметке был uri, то обновлять UI не нужно
+                updateUI();
+                return true;
+            }
             else
                 return false;
-        }else {
+        }else
+        {
             if(saveZamNotBtm(zametka))
             {
                 updateUI();
@@ -240,7 +246,6 @@ public class LocalBase {
             else
                 return false;
         }
-
     }
 
 

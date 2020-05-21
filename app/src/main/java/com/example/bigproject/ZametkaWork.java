@@ -127,5 +127,20 @@ public class ZametkaWork {
             });
         thread.start();
     }
+    public void preparationAndSaveZam(final Zametka zametkaNew){
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Uri uri = Uri.parse(zametkaNew.getUri());
+                zametkaNew.setBitmap( serializationBitmap(uri) );
+                LocalBase.saveStrBitmap(zametkaNew.getData(),zametkaNew.getBitmap());
+                zametkaNew.setUri("");
+                LocalBase.saveZamNotBtm(zametkaNew);
+            }
+        });
+        thread.start();
+
+    }
 
 }

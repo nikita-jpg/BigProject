@@ -2,6 +2,8 @@ package com.example.bigproject;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
 
 public class SolventRecyclerViewAdapter  extends RecyclerView.Adapter<SolventViewHolders> {
@@ -41,36 +44,48 @@ public class SolventRecyclerViewAdapter  extends RecyclerView.Adapter<SolventVie
     public void onBindViewHolder(final SolventViewHolders holder, int position) {
 
         holder.zametka=itemList.get(position);
-        if(LocalBase.chheckBitmap(itemList.get(position).getData()))
+
+        if(!itemList.get(position).getUri().equals(""))//Если в заметке есть Uri, то картинку будем подгружать по нему
         {
-            holder.countryPhoto.setImageResource(R.drawable.loading);
+            holder.countryName.setVisibility(View.GONE);
+            final InputStream imageStream;
+            try {
+                imageStream = context.getContentResolver().openInputStream(Uri.parse(itemList.get(position).getUri()));
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                holder.countryPhoto.setImageBitmap(selectedImage);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        else if(LocalBase.chheckBitmap(itemList.get(position).getData()))//Если Uri нет, то проверяем есть ли в базе картинка
+        {
             holder.countryName.setVisibility(View.GONE);
             final int finPosition = position;
             final android.os.Handler handler = new Handler()
-            {
-                @Override
-                public void handleMessage(@NonNull Message msg) {
-                    super.handleMessage(msg);
-                    holder.countryPhoto.setImageBitmap((Bitmap) msg.obj);
-                }
-            };
+                {
+                    @Override
+                    public void handleMessage(@NonNull Message msg) { super.handleMessage(msg);
+                       holder.countryPhoto.setImageBitmap((Bitmap) msg.obj); }
+                };
 
             Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Bitmap bitmap = LocalBase.getBitmap(itemList.get(finPosition).getData());
-                        Message message = new Message();
-                        message.obj = bitmap;
-                        handler.sendMessage(message);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                    @Override
+                    public void run() {
+                        try {
+                            Bitmap bitmap = LocalBase.getBitmap(itemList.get(finPosition).getData());
+                            Message message = new Message();
+                            message.obj = bitmap;
+                            handler.sendMessage(message);
+                        } catch (FileNotFoundException e)
+                        {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            });
+                });
             thread.start();
+
         }
-        else
+        else//Если картинки нет, то показываем текст
         {
             holder.countryPhoto.setVisibility(View.GONE);
             holder.countryName.setText(itemList.get(position).getName());

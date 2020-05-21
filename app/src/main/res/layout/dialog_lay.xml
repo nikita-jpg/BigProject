@@ -14,18 +14,34 @@
         android:layout_height="wrap_content"
         >
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
         <EditText
+
             android:id="@+id/zametka_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="17dp"
             android:layout_marginTop="5dp"
             android:gravity="top|center"
+            android:layout_weight="2"
             android:textColor="@color/abs_white"
             android:textColorHint="@color/hint_grey"
             android:hint="Название"
+            android:maxLength="30"
             android:textSize="20dp"
             android:backgroundTint="@color/transparent"/>
+
+            <Button
+                android:id="@+id/button_set_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
+                android:layout_weight="15"
+                android:gravity="right" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/zametka_value"
@@ -45,6 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginBottom="2dp"
             >
 
             <Button
@@ -53,7 +70,6 @@
                 android:layout_height="24dp"
                 android:layout_marginLeft="243dp"
                 android:layout_marginRight="0dp"
-                android:layout_marginBottom="2dp"
                 android:backgroundTint="@color/red"
                 android:gravity="center"
                 android:insetTop="0dp"
@@ -70,7 +86,6 @@
                 android:layout_height="24dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="15dp"
-                android:layout_marginBottom="2dp"
                 android:backgroundTint="@color/blue"
                 android:gravity="center"
                 android:insetTop="0dp"
@@ -82,7 +97,6 @@
                 app:elevation="0dp" />
 
         </LinearLayout>
-
 
 
     </LinearLayout>

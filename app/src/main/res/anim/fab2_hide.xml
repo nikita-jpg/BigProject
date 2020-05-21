@@ -2,16 +2,13 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:fillAfter="true">
 
-    <!--Move-->
     <translate
-        android:duration="300"
-        android:fromXDelta="-150%"
-        android:fromYDelta="-150%"
+        android:duration="500"
+        android:fromYDelta="-110%"
+        android:fromXDelta="-10%"
         android:interpolator="@android:anim/linear_interpolator"
-        android:toXDelta="0%"
+        android:toXDelta="-10%"
         android:toYDelta="0%"></translate>
-
-    <!--Fade Out-->
 
 
 </set>

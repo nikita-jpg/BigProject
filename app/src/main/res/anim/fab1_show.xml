@@ -2,21 +2,14 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:fillAfter="true">
 
-
     <!--Move-->
     <translate
-        android:duration="300"
-        android:fromXDelta="170%"
-        android:fromYDelta="25%"
+        android:duration="500"
+        android:fromYDelta="0%"
+        android:fromXDelta="-10%"
         android:interpolator="@android:anim/linear_interpolator"
-        android:toXDelta="0%"
-        android:toYDelta="0%"></translate>
+        android:toXDelta="-10%"
+        android:toYDelta="-250%"></translate>
 
-    <!--Fade In-->
-    <alpha
-        android:duration="0"
-        android:fromAlpha="0.0"
-        android:interpolator="@android:anim/decelerate_interpolator"
-        android:toAlpha="1.0"></alpha>
 
 </set>

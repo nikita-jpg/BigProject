@@ -51,6 +51,9 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
     private Animation show_fab_2;
     private Animation hide_fab_2;
 
+    private int fab_exit_width;
+
+
     /*Тут происходит запуск основных структур приложения */
     private void inicialization()
     {
@@ -144,21 +147,21 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
     private void expandFAB()
     {
 
-        //Floating Action Button 1
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fabExit.getLayoutParams();
-        layoutParams.rightMargin += (int) (fabExit.getWidth() * 1.7);
-        layoutParams.bottomMargin += (int) (fabExit.getHeight() * 0.3);
-        fabExit.setLayoutParams(layoutParams);
-        fabExit.startAnimation(show_fab_1);
-        fabExit.setClickable(true);
-
-        //Floating Action Button 2
-        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) fabCreateZam.getLayoutParams();
-        layoutParams2.rightMargin += (int) (fabCreateZam.getWidth() * 0.9);
-        layoutParams2.bottomMargin += (int) (fabCreateZam.getHeight() * 1.5);
-        fabCreateZam.setLayoutParams(layoutParams2);
-        fabCreateZam.startAnimation(show_fab_2);
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fabCreateZam.getLayoutParams();
+        //layoutParams.rightMargin += (int) (fabCreateZam.getWidth() * 1.3);
+        //layoutParams.bottomMargin += (int) (fabCreateZam.getHeight() * 1.5);
+        fabCreateZam.setLayoutParams(layoutParams);
+        fabCreateZam.startAnimation(show_fab_1);
         fabCreateZam.setClickable(true);
+
+
+
+        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) fabExit.getLayoutParams();
+        //layoutParams2.rightMargin += (int) (fabExit.getWidth() * 1.7);
+        layoutParams2.bottomMargin += (int) (fabExit.getHeight() * 0.25);
+        fabExit.setLayoutParams(layoutParams2);
+        fabExit.startAnimation(show_fab_2);
+        fabExit.setClickable(true);
 
     }
 
@@ -166,21 +169,21 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
     private void hideFAB()
     {
 
-        //Floating Action Button 1
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fabExit.getLayoutParams();
-        layoutParams.rightMargin -= (int) (fabExit.getWidth() * 1.7);
-        layoutParams.bottomMargin -= (int) (fabExit.getHeight() * 0.25);
-        fabExit.setLayoutParams(layoutParams);
-        fabExit.startAnimation(hide_fab_1);
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fabCreateZam.getLayoutParams();
+        //layoutParams.rightMargin -= (int) (fabCreateZam.getWidth() * 1.3);
+        //layoutParams.bottomMargin -= (int) (fabCreateZam.getHeight() * 1.5);
+        fabCreateZam.setLayoutParams(layoutParams);
+        fabCreateZam.startAnimation(hide_fab_1);
+        fabCreateZam.setClickable(false);
+
+
+        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) fabExit.getLayoutParams();
+        //layoutParams2.rightMargin -= (int) (fabExit.getWidth() * 1.7);
+        layoutParams2.bottomMargin -= (int) (fabExit.getHeight() * 0.25);
+        fabExit.setLayoutParams(layoutParams2);
+        fabExit.startAnimation(hide_fab_2);
         fabExit.setClickable(false);
 
-        //Floating Action Button 2
-        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) fabCreateZam.getLayoutParams();
-        layoutParams2.rightMargin -= (int) (fabCreateZam.getWidth() * 1.5);
-        layoutParams2.bottomMargin -= (int) (fabCreateZam.getHeight() * 1.5);
-        fabCreateZam.setLayoutParams(layoutParams2);
-        fabCreateZam.startAnimation(hide_fab_2);
-        fabCreateZam.setClickable(false);
     }
 
     @Override
@@ -213,7 +216,7 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
     private void makeZam()
     {
         Zametka zametka = ZametkaWork.makeZametka();
-        AddDialogFragment addDialogFragment = new AddDialogFragment(zametka);
+        AddDialogFragment addDialogFragment = new AddDialogFragment(zametka,getApplicationContext());
         addDialogFragment.show(( this).getSupportFragmentManager(), "addDialog");
     }
 
