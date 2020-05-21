@@ -1,7 +1,8 @@
 package com.example.bigproject;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -26,13 +27,14 @@ import java.util.List;
 
 public class MainClass extends AppCompatActivity implements View.OnClickListener{
     private StaggeredGridLayoutManager gaggeredGridLayoutManager;
-    private List<Zametka> zametkaList = null;
-    private List<Zametka> zametkaListTwo = null;
-    private SolventRecyclerViewAdapter rcAdapter;
+    private List<Zametka> zametkaList = null;//Текущий список заметок
+    private SolventRecyclerViewAdapter rcAdapter;//Адаптер для заметок
     private RecyclerView recyclerView;
-    protected boolean mainClassIsWork;
-    private static Intent thisService;
+    protected boolean mainClassIsWork;//Показывает открыт ли сейчас главный экран приложения
+    private static Intent thisService;//Хранит текущий сервис
+    private final String APP_PREFERENCES = "mysettings";//Имя SharedPreference с настройками
 
+    //FAB
     private FloatingActionButton fab;
     private FloatingActionButton fab1;
     private FloatingActionButton fab2;
@@ -53,8 +55,7 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
     private Animation show_fab_3;
     private Animation hide_fab_3;
 
-
-
+    /*Тут происходит запуск основных структур приложения */
     private void inicialization()
     {
         rootLayout = (CoordinatorLayout) findViewById(R.id.coordinator_lay);
@@ -97,6 +98,7 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
         thisService.putExtra("heightForButton",heightForButton);
         startService(thisService);
     }
+
     private void MakeRecycleViewAndAdapter() throws FileNotFoundException
     {
         zametkaList = LocalBase.getZamLocal();
@@ -109,20 +111,6 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
 
         rcAdapter = new SolventRecyclerViewAdapter(MainClass.this, zametkaList,recyclerView );
         recyclerView.setAdapter(rcAdapter);
-    }
-    protected synchronized void updateUI()
-    {
-        try {
-            zametkaListTwo = LocalBase.getZamLocal();
-            if (!zametkaListTwo.equals(zametkaList)) {
-                zametkaList = zametkaListTwo;
-                rcAdapter.setItemList(zametkaListTwo);
-                rcAdapter.notifyDataSetChangedMyMethod();
-                rcAdapter.notifyDataSetChanged();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -140,7 +128,7 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
             }
         };
 
-        LocalBase.setHandler(handler);
+        LocalBase.setHandler(handler);//Даём базе хендлер для общения с UI
         startService();
         try {
             MakeRecycleViewAndAdapter();
@@ -149,20 +137,23 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
         }
     }
 
-    protected void onStart() {
-        super.onStart();
-        mainClassIsWork = true;
+    /*Работа с UI*/
+    //Если нужно перерисовать UI
+    protected synchronized void updateUI()
+    {
+        try {
+            zametkaList = LocalBase.getZamLocal();
+            rcAdapter.setItemList(zametkaList);
+            rcAdapter.notifyDataSetChangedMyMethod();
+            rcAdapter.notifyDataSetChanged();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
-    protected void onStop() {
-        super.onStop();
-        mainClassIsWork = false;
-    }
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        updateUI();
-    }
-    private void expandFAB() {
+
+    //Показать меню FAB
+    private void expandFAB()
+    {
 
         //Floating Action Button 1
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fab1.getLayoutParams();
@@ -189,8 +180,9 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
         fab3.setClickable(true);
     }
 
-
-    private void hideFAB() {
+    //Скрыть меню FAB
+    private void hideFAB()
+    {
 
         //Floating Action Button 1
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fab1.getLayoutParams();
@@ -218,7 +210,8 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(View view)
+    {
         switch (view.getId())
         {
             case R.id.fab:
@@ -233,8 +226,7 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
                 }
                 break;
             case R.id.fab_exit:
-                Intent intent = new Intent(this,MyService.class);
-                stopService(intent);
+                exit();
                 Toast.makeText(getApplication(), "Floating Action Button 1", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.fab_2:
@@ -244,5 +236,47 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
                 Toast.makeText(getApplication(), "Floating Action Button 3", Toast.LENGTH_SHORT).show();
                 break;
         }
+    }
+
+    //Выходим из аккаунта
+    private void exit()
+    {
+
+        Intent intent = new Intent(this,MyService.class);
+        stopService(intent);
+        LocalBase.deleteBase();
+        exit();
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+
+        this.finish();
+    }
+
+
+
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mainClassIsWork = true;
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mainClassIsWork = false;
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        updateUI();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
     }
 }

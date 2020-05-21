@@ -33,12 +33,13 @@ public class MyService extends Service implements View.OnTouchListener {
     private int widthForButton = 0;
     private int heightForButton = 0;
     private Button mButton;
-    private boolean cycle = true;
+    private boolean cycle = true; //Отвечает за работу потока, который проверяет данные в буфере и галереи
 
     private WindowManager.LayoutParams params;
     private WindowManager wm;
 
 
+    //Поток,в котором выполняется проверка галереии и буфера обмена
     private void buildThread()
     {
         tekStr= gallaryAndBuffer.GetTekStr();//Чтобы при первом запуске не появлялось кнопки
@@ -94,13 +95,14 @@ public class MyService extends Service implements View.OnTouchListener {
         thread.interrupt();
     }
 
-
+    //Выводит кнопку на экран
     private void makeBtn() {
         mButton.setTextColor(context.getResources().getColor(R.color.button_txt_norm));
         mButton.setClickable(true);
         wm.addView(mButton, params);
     }
 
+    //Удаляет кнопку с экрана
     private void deleteBtn() {
         wm.removeView(mButton);
     }

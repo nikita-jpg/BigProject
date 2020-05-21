@@ -1,5 +1,6 @@
 package com.example.bigproject;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +14,8 @@ import com.yakivmospan.scytale.KeyProps;
 import com.yakivmospan.scytale.Options;
 import com.yakivmospan.scytale.Store;
 
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -241,7 +244,7 @@ public class LocalBase {
     }
 
 
-    /* Удаление */
+    /* Удаление звсетки */
     public static synchronized void deleteZam(String data)
     {
         File fileZam = new File(root + folderForZametka + "/" + data + ".txt");
@@ -251,7 +254,27 @@ public class LocalBase {
         updateUI();
     }
 
+    //При выходе из аккаунта удаляем все данные
+    public static void deleteBase()
+    {
+        File file1 = new File(root + folderForZametka+"/");
+        if (file1.exists()) {
+            try {
+                FileUtils.deleteDirectory(file1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        File file2 = new File(root + folderForImages);
+        if (file2.exists()) {
+            try {
+                FileUtils.deleteDirectory(file2);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
+    }
 
 
     /* Получаем данные */
@@ -330,12 +353,6 @@ public class LocalBase {
         Message message = new Message();
         handler.sendMessage(message);
     }
-
-    public static void exitBase()
-    {
-
-    }
-
 
 }
 

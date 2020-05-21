@@ -19,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static com.example.bigproject.MainActivity.APP_PREFERENCES;
 
 public class ServerWork {
-    private static String defaultHost = "https://d9962d1f.ngrok.io/";
+    private static String defaultHost = "https://85578a55.ngrok.io/";
     private SharedPreferences mSittings;
     private final String AUTHTOHOST = "AuthToHost";
     private Context context;
