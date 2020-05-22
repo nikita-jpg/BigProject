@@ -57,8 +57,6 @@ public class AddDialogFragment extends DialogFragment {
         zametkaName.setText(zametka.getName());
         zametkaValue.setText(zametka.getValue());
 
-
-
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
