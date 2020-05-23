@@ -89,6 +89,7 @@ public class SolventRecyclerViewAdapter  extends RecyclerView.Adapter<SolventVie
         else//Если картинки нет, то показываем текст
         {
             holder.countryPhoto.setVisibility(View.GONE);
+
             holder.countryName.setText(itemList.get(position).getName());
         }
 

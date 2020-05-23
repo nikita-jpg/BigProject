@@ -47,7 +47,7 @@ public class LocalBase {
 
     private static Context context;
     private static String root = "";
-    private static String folderForZametka = "";
+    private static String folderForZametka = "/zametka";
     private static String folderForImages = "";
     private static String storeName = "";
     private static String storePassword = "";
@@ -231,6 +231,8 @@ public class LocalBase {
                 if(saveZamNotBtm(zametka))
                 {
                     updateUI();
+                    ServerWork serverWork = new ServerWork(context);
+                    serverWork.upload(zametka.getData(),context);
                     return true;
                 }
                 else
@@ -241,6 +243,8 @@ public class LocalBase {
             if(saveZamNotBtm(zametka))
             {
                 updateUI();
+                ServerWork serverWork = new ServerWork(context);
+                serverWork.upload(zametka.getData(),context);
                 return true;
             }
             else

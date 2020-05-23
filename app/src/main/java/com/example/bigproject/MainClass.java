@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.util.DisplayMetrics;
@@ -127,6 +128,13 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        final Toast toast = Toast.makeText(getBaseContext(), "Началась загрузка данных",Toast.LENGTH_SHORT);
+        toast.show();
+        new CountDownTimer(10000, 1000)
+        {
+            public void onTick(long millisUntilFinished) {toast.show();}
+            public void onFinish() {toast.cancel();}
+        }.start();
     }
 
     /*Работа с UI*/
@@ -204,11 +212,9 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
                 break;
             case R.id.fab_exit:
                 exit();
-                Toast.makeText(getApplication(), "Floating Action Button 1", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.create_zam:
                 makeZam();
-                Toast.makeText(getApplication(), "Floating Action Button 2", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

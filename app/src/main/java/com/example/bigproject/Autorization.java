@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -85,8 +86,11 @@ public class Autorization extends Activity implements View.OnClickListener {
     //Выводим сообщение для пользователя
     private void requestToUser(String request,int color)
     {
-        requestTextView.setTextColor(color);
-        requestTextView.setText(request);
+        Toast toast = Toast.makeText(getApplicationContext(),
+                request, Toast.LENGTH_SHORT);
+        toast.show();
+        //requestTextView.setTextColor(color);
+        //requestTextView.setText(request);
     }
 
     @Override
