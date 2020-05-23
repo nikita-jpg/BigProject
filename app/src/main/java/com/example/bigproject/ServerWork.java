@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,7 +20,10 @@ import com.koushikdutta.async.http.body.MultipartFormDataBody;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.PublicKey;
 import java.util.List;
 
@@ -33,6 +37,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.content.ContentValues.TAG;
 import static com.example.bigproject.MainActivity.APP_PREFERENCES;
 
 public class ServerWork {
@@ -48,6 +53,7 @@ public class ServerWork {
     ServerWork(Context context){
         this.context = context;
         root = String.valueOf(context.getFilesDir());
+
     }
 
 
@@ -84,8 +90,7 @@ public class ServerWork {
             //Cохраняем файл для автоавторизации
             mSittings = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = mSittings.edit();
-            editor.putString(AUTHTOHOST,req);
-            editor.apply();
+            editor.putString(AUTHTOHOST,requests[1]);
             editor.commit();
 
             if(!regOrAut.equals("reg"))
@@ -109,8 +114,7 @@ public class ServerWork {
 
         mSittings = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         final String auth = mSittings.getString(AUTHTOHOST,"");
-        MultipartFormDataBody body = new MultipartFormDataBody();
-        body.addStringPart("nik",auth);
+
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -122,10 +126,32 @@ public class ServerWork {
                         .addConverterFactory(GsonConverterFactory.create(gson))
                         .build();
                 ServerApi registrationApi = retrofit.create(ServerApi.class);
-                Call<String[]> request = registrationApi.getFileNameArr("'"+auth+"'");
+                Call<String[]> request = registrationApi.getFileNameArr(auth);
 
                 try {
                     String[] arr  = request.execute().body();
+                    if(arr[0].equals("0")) return;
+                    String b = "4";
+
+                    for(int i=0;i<arr.length;i++)
+                    {
+                        Gson gson1 = new GsonBuilder()
+                                .setLenient()
+                                .create();
+                        Retrofit retrofit1 = new Retrofit.Builder()
+                                .baseUrl(defaultHost)
+                                .addConverterFactory(GsonConverterFactory.create(gson))
+                                .build();
+                        ServerApi registrationApi1 = retrofit.create(ServerApi.class);
+                        Call<ResponseBody> request1 = registrationApi1.downloadFile(auth,arr[i]);
+
+                        Response<ResponseBody> file = request1.execute();
+                        LocalBase.writeResponseBodyToDisk(file.body());
+                        String c ="4";
+
+                    }
+
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -160,22 +186,5 @@ public class ServerWork {
         });
 
     }
-    private static MultipartBody.Part prepareFilePart(String partName,String str) {
-        File file;
 
-        if(str.equals("img"))
-            file = new File(root+folderForImages+"/"+partName+".txt");
-        else
-            file = new File(root+folderForZametka+"/"+partName+".txt");
-
-        // create RequestBody instance from file
-        RequestBody requestFile =
-                RequestBody.create(
-                        MediaType.parse("text"),
-                        file
-                );
-
-        // MultipartBody.Part is used to send also the actual file name
-        return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
-    }
 }

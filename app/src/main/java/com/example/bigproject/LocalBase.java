@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.Message;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
+import android.util.Log;
 
 import com.scottyab.aescrypt.AESCrypt;
 import com.yakivmospan.scytale.Crypto;
@@ -29,6 +30,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -42,6 +44,10 @@ import java.util.logging.Handler;
 
 import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
+
+import okhttp3.ResponseBody;
+
+import static android.content.ContentValues.TAG;
 
 public class LocalBase {
 
@@ -363,5 +369,59 @@ public class LocalBase {
         handler.sendMessage(message);
     }
 
+    public static synchronized boolean writeResponseBodyToDisk(ResponseBody body) {
+        try {
+            // todo change the file location/name according to your needs
+            String a = body.string();
+            a = a.substring(5,17);
+            String b = body.toString();
+            File futureStudioIconFile = new File(root + "/" + folderForZametka +"/" + a);
+
+            if(!futureStudioIconFile.exists()) return false;
+
+            InputStream inputStream = null;
+            OutputStream outputStream = null;
+
+            try {
+                byte[] fileReader = new byte[4096];
+
+                long fileSize = body.contentLength();
+                long fileSizeDownloaded = 0;
+
+                inputStream = body.byteStream();
+                outputStream = new FileOutputStream(futureStudioIconFile);
+
+                while (true) {
+                    int read = inputStream.read(fileReader);
+
+                    if (read == -1) {
+                        break;
+                    }
+
+                    outputStream.write(fileReader, 0, read);
+
+                    fileSizeDownloaded += read;
+
+                    Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
+                }
+
+                outputStream.flush();
+
+                return true;
+            } catch (IOException e) {
+                return false;
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+    }
 }
 

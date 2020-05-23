@@ -1,5 +1,7 @@
 package com.example.bigproject;
 
+import java.io.File;
+
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -17,13 +19,12 @@ public interface ServerApi {
     @POST( "/autPerson")
     Call<String> autPerson(@Query(value = "login") String login,@Query(value = "password") String password);
 
-    @Multipart
-    @POST("/uploadFile")
-    Call<ResponseBody> uploadFile (
-            @Query(value = "authString") String authString,
-            @Part MultipartBody.Part zam,
-            @Part MultipartBody.Part img
+    @POST("/downloadFile")
+    Call<ResponseBody> downloadFile (
+            @Query(value = "auth") String authString,
+            @Query(value = "name") String name
             );
+
     @POST("/getFileNameArr")
     Call<String[]> getFileNameArr(@Query(value = "auth") String auth);
 }
