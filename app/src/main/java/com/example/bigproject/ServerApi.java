@@ -20,7 +20,7 @@ public interface ServerApi {
     Call<String> autPerson(@Query(value = "login") String login,@Query(value = "password") String password);
 
     @POST("/downloadFile")
-    Call<ResponseBody> downloadFile (
+    Call<String[]> downloadFile (
             @Query(value = "auth") String authString,
             @Query(value = "name") String name
             );

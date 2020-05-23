@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -258,7 +259,6 @@ public class LocalBase {
         }
     }
 
-
     /* Удаление звсетки */
     public static synchronized void deleteZam(String data)
     {
@@ -369,59 +369,24 @@ public class LocalBase {
         handler.sendMessage(message);
     }
 
-    public static synchronized boolean writeResponseBodyToDisk(ResponseBody body) {
+
+    public static synchronized boolean writeResponseBodyToDisk(String data,String name) {
+        File file1 = new File(root +folderForZametka+"/"+name);
+        FileOutputStream fileOutputStream = null;
         try {
-            // todo change the file location/name according to your needs
-            String a = body.string();
-            a = a.substring(5,17);
-            String b = body.toString();
-            File futureStudioIconFile = new File(root + "/" + folderForZametka +"/" + a);
-
-            if(!futureStudioIconFile.exists()) return false;
-
-            InputStream inputStream = null;
-            OutputStream outputStream = null;
-
-            try {
-                byte[] fileReader = new byte[4096];
-
-                long fileSize = body.contentLength();
-                long fileSizeDownloaded = 0;
-
-                inputStream = body.byteStream();
-                outputStream = new FileOutputStream(futureStudioIconFile);
-
-                while (true) {
-                    int read = inputStream.read(fileReader);
-
-                    if (read == -1) {
-                        break;
-                    }
-
-                    outputStream.write(fileReader, 0, read);
-
-                    fileSizeDownloaded += read;
-
-                    Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
-                }
-
-                outputStream.flush();
-
-                return true;
-            } catch (IOException e) {
-                return false;
-            } finally {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-            }
+            fileOutputStream = new FileOutputStream(file1);
+            fileOutputStream.write(data.getBytes());
+            fileOutputStream.close();
+            updateUI();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
         } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
+        return true;
     }
+
 }
 

@@ -130,8 +130,8 @@ public class ServerWork {
 
                 try {
                     String[] arr  = request.execute().body();
+                    String[] arr2;
                     if(arr[0].equals("0")) return;
-                    String b = "4";
 
                     for(int i=0;i<arr.length;i++)
                     {
@@ -143,17 +143,20 @@ public class ServerWork {
                                 .addConverterFactory(GsonConverterFactory.create(gson))
                                 .build();
                         ServerApi registrationApi1 = retrofit.create(ServerApi.class);
-                        Call<ResponseBody> request1 = registrationApi1.downloadFile(auth,arr[i]);
+                        Call<String[]> request1 = registrationApi1.downloadFile(auth,arr[i]);
+                        arr2 = request1.execute().body();
+                        if(arr2[0].equals("0")) return;
 
-                        Response<ResponseBody> file = request1.execute();
-                        LocalBase.writeResponseBodyToDisk(file.body());
-                        String c ="4";
+                        String name = arr2[1].substring(0,arr2[1].indexOf("|"));
+                        name = name.replaceAll("_",":");
+                        String data = arr2[1].substring(arr2[1].indexOf("|"));
+                        LocalBase.writeResponseBodyToDisk(data,name);
 
                     }
 
-
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return;
                 }
             }
         });
