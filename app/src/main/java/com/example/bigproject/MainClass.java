@@ -128,13 +128,7 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        final Toast toast = Toast.makeText(getBaseContext(), "Началась загрузка данных",Toast.LENGTH_SHORT);
-        toast.show();
-        new CountDownTimer(10000, 1000)
-        {
-            public void onTick(long millisUntilFinished) {toast.show();}
-            public void onFinish() {toast.cancel();}
-        }.start();
+
     }
 
     /*Работа с UI*/

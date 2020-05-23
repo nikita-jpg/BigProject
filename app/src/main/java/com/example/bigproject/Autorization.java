@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
@@ -39,11 +40,27 @@ public class Autorization extends Activity implements View.OnClickListener {
     private EditText loginText;
     private EditText passwordText;
     private TextView requestTextView;
+    private String regStatus="";
 
 
     //Запускаем главное окно приложения
     private void startMainClass()
     {
+        if(!regStatus.equals("") && !regStatus.equals("reg"))
+        {
+            final Toast toast = Toast.makeText(getBaseContext(), "Началась загрузка данных", Toast.LENGTH_SHORT);
+            toast.show();
+            new CountDownTimer(10000, 1000) {
+                public void onTick(long millisUntilFinished) {
+                    toast.show();
+                }
+
+                public void onFinish() {
+                    toast.cancel();
+                }
+            }.start();
+        }
+
         SharedPreferences.Editor editor = mSittings.edit();
         editor.putString(AUTORIZATION,"true");
         editor.apply();
@@ -176,6 +193,7 @@ public class Autorization extends Activity implements View.OnClickListener {
                 regOrAut = "reg";
             else
                 regOrAut = "aut";
+            regStatus = regOrAut;
             runnable = new Runnable() {
                 @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
