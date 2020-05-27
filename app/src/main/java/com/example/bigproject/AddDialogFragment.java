@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.fragment.app.DialogFragment;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import static android.app.Activity.RESULT_OK;
@@ -81,7 +82,11 @@ public class AddDialogFragment extends DialogFragment {
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        LocalBase.save(zametka);
+                        try {
+                            LocalBase.save(zametka);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         if(!zametka.getUri().equals(""))
                         {
                             ZametkaWork zametkaWork = new ZametkaWork(context);
@@ -117,14 +122,8 @@ public class AddDialogFragment extends DialogFragment {
         switch(requestCode) {
             case Pick_image:
                 if(resultCode == RESULT_OK){
-
-                    //Получаем URI изображения, преобразуем его в Bitmap
-                    //объект и отображаем в элементе ImageView нашего интерфейса:
                     final Uri imageUri = imageReturnedIntent.getData();zametka.setUri(imageUri.toString());
                     zametka.setUri(imageUri.toString());
-                    //final InputStream imageStream = getContext().getContentResolver().openInputStream(imageUri);
-                    //final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                    //imageView.setImageBitmap(selectedImage);
 
                 }
         }}

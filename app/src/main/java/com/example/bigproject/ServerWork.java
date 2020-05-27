@@ -2,11 +2,8 @@ package com.example.bigproject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -17,31 +14,20 @@ import com.koushikdutta.async.http.AsyncHttpPost;
 import com.koushikdutta.async.http.AsyncHttpResponse;
 import com.koushikdutta.async.http.body.MultipartFormDataBody;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.PublicKey;
-import java.util.List;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static android.content.ContentValues.TAG;
 import static com.example.bigproject.MainActivity.APP_PREFERENCES;
 
 public class ServerWork {
-    private static String defaultHost = "https://38c7363d.ngrok.io/";
+    private static String defaultHost = "https://920ddfa6bc10.ngrok.io/";
     private static SharedPreferences mSittings;
     private static final String AUTHTOHOST = "AuthToHost";
     private static final String folderForZametka="zametka";
@@ -94,7 +80,7 @@ public class ServerWork {
             editor.commit();
 
             if(!regOrAut.equals("reg"))
-                saveServer();
+                saveFromServer();
         } catch (IOException e) {
             e.printStackTrace();
             return 0;
@@ -102,7 +88,7 @@ public class ServerWork {
         return 1;
     }
 
-    public void saveServer(){
+    public void saveFromServer(){
         android.os.Handler handler = new Handler()
         {
             @Override
@@ -132,18 +118,11 @@ public class ServerWork {
                     String[] arr  = request.execute().body();
                     String[] arr2;
                     if(arr[0].equals("0")) return;
-
+                    //Переделываем
                     for(int i=0;i<arr.length;i++)
                     {
-                        Gson gson1 = new GsonBuilder()
-                                .setLenient()
-                                .create();
-                        Retrofit retrofit1 = new Retrofit.Builder()
-                                .baseUrl(defaultHost)
-                                .addConverterFactory(GsonConverterFactory.create(gson))
-                                .build();
                         ServerApi registrationApi1 = retrofit.create(ServerApi.class);
-                        Call<String[]> request1 = registrationApi1.downloadFile(auth,arr[i]);
+                        Call<String[]> request1 = registrationApi1.uploadText(auth,arr[i]);
                         arr2 = request1.execute().body();
                         if(arr2[0].equals("0")) return;
 
@@ -162,17 +141,20 @@ public class ServerWork {
         });
         thread.start();
     }
-    public static synchronized void upload(String name,Context con){
 
-        AsyncHttpPost post = new AsyncHttpPost(defaultHost+"uploadFile");
+    //Переделываем
+    //true - загружаем ещё и картинку,false - только текст
+    public static synchronized void upload(final String name, Context con, boolean imgBol) throws IOException {
+
+        AsyncHttpPost post = new AsyncHttpPost(defaultHost+"uploadText");
         MultipartFormDataBody body = new MultipartFormDataBody();
         File file1 = new File(root+"/"+folderForZametka+"/"+name+".txt");
         if(!file1.exists()){
             return;
         }
 
+
         body.addFilePart("zam", file1);
-        //body.addFilePart("img", file2);
         mSittings = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         body.addStringPart("foo", mSittings.getString(AUTHTOHOST,""));
         body.addStringPart("fileName",name);
@@ -187,6 +169,39 @@ public class ServerWork {
                 System.out.println("Server says: " + result);
             }
         });
+
+        if(imgBol)
+        {
+            File file2 = new File(root+"/"+folderForImages+"/"+name+".txt");
+            if(!file2.exists()){
+                return;
+            }
+            final byte[] bytes = IOUtils.toByteArray(new FileInputStream(file2));
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final String fileName = name;
+                    Gson gson = new GsonBuilder()
+                            .setLenient()
+                            .create();
+                    Retrofit retrofit = new Retrofit.Builder()
+                            .baseUrl(defaultHost)
+                            .addConverterFactory(GsonConverterFactory.create(gson))
+                            .build();
+                    ServerApi registrationApi = retrofit.create(ServerApi.class);
+                    Call<Integer> request = registrationApi.uploadImage( mSittings.getString(AUTHTOHOST,""),fileName,bytes);
+                    try {
+                        request.execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            thread.start();
+        }
+
+
+
 
     }
 

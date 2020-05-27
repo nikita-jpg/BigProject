@@ -224,8 +224,7 @@ public class LocalBase {
         }
         return true;
     }
-    public static synchronized boolean save(Zametka zametka)
-    {
+    public static synchronized boolean save(Zametka zametka) throws IOException {
         //Проверяем, содержит ли заметка uri
        // boolean haveUri = false;
         //if(!zametka.getUri().equals("")) haveUri = true;
@@ -239,7 +238,7 @@ public class LocalBase {
                 {
                     updateUI();
                     ServerWork serverWork = new ServerWork(context);
-                    serverWork.upload(zametka.getData(),context);
+                    serverWork.upload(zametka.getData(),context,true);
                     return true;
                 }
                 else
@@ -251,7 +250,7 @@ public class LocalBase {
             {
                 updateUI();
                 ServerWork serverWork = new ServerWork(context);
-                serverWork.upload(zametka.getData(),context);
+                serverWork.upload(zametka.getData(),context,false);
                 return true;
             }
             else
@@ -369,7 +368,7 @@ public class LocalBase {
         handler.sendMessage(message);
     }
 
-
+    //Переделываем
     public static synchronized boolean writeResponseBodyToDisk(String data,String name) {
         File file1 = new File(root +folderForZametka+"/"+name);
         FileOutputStream fileOutputStream = null;

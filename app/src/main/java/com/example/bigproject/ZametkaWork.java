@@ -9,6 +9,7 @@ import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -89,7 +90,11 @@ public class ZametkaWork {
                 zametka.setBitmap("");
 
                 //Сохраняемя заметку в файл
-                LocalBase.save(zametka);
+                try {
+                    LocalBase.save(zametka);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 String v = "4";
                 thread.interrupt();
@@ -120,7 +125,11 @@ public class ZametkaWork {
                 zametka.setBitmap(bitmapStr);
 
                 //Сохраняемя заметку в файл
-                LocalBase.save(zametka);
+                try {
+                    LocalBase.save(zametka);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 thread.interrupt();
                 }
