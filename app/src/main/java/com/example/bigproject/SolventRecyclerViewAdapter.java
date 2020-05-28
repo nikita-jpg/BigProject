@@ -60,8 +60,8 @@ public class SolventRecyclerViewAdapter  extends RecyclerView.Adapter<SolventVie
         else if(LocalBase.chheckBitmap(itemList.get(position).getData()))//Если Uri нет, то проверяем есть ли в базе картинка
         {
             holder.countryName.setVisibility(View.GONE);
-            holder.countryPhoto.setVisibility(View.VISIBLE);
             holder.countryPhoto.setImageResource(R.drawable.loading);
+            holder.countryPhoto.setVisibility(View.VISIBLE);
             final int finPosition = position;
             final android.os.Handler handler = new Handler()
                 {

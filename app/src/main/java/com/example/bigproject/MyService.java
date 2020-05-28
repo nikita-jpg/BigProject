@@ -88,7 +88,8 @@ public class MyService extends Service implements View.OnTouchListener {
 
     private void startThread() {
         date = System.currentTimeMillis() / 1000;
-        thread.start();
+        if(!thread.isAlive())
+            thread.start();
     }
 
     private void stopThread() {

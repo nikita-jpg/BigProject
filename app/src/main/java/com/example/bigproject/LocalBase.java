@@ -189,7 +189,6 @@ public class LocalBase {
         if(strBtm.length() == 0) return false;
 
         try {
-
             String strBtmEncode = encode(strBtm);
             char[] arrS = deCode(strBtmEncode).toCharArray();
             String arr = deCode(strBtmEncode);
@@ -210,6 +209,7 @@ public class LocalBase {
     public static synchronized boolean saveZamNotBtm(Zametka zametka)
     {
         zametka.setBitmap("");
+        zametka.setUri("");
         File file1 = new File(root + folderForZametka +"/"+ zametka.getData() + ".txt");
         try {
             String zamStr = serializationZametke(zametka);

@@ -22,11 +22,11 @@
             android:enabled="true"
             android:exported="true"></service>
 
-        <activity android:name=".Autorization"
-            android:windowSoftInputMode="adjustResize">
+        <activity android:name=".Autorization">
         </activity>
         
-        <activity android:name=".MainClass">
+        <activity android:name=".MainClass"
+            android:screenOrientation="fullSensor">
         </activity>
         <activity android:name=".MainActivity">
             <intent-filter>

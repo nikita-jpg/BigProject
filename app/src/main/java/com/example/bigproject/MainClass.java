@@ -3,6 +3,7 @@ package com.example.bigproject;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -111,7 +112,6 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         inicialization();
-
         android.os.Handler handler = new Handler()
         {
             @Override

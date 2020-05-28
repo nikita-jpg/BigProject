@@ -112,7 +112,7 @@ public class ServerWork {
                     String[] arr2;
                     byte[] bytes;
                     String as = "1";
-                    if(names[0].equals("0")) return;
+                    if(names.length ==0 || names[0].equals("0")) return;
                     //Переделываем
                     for(int i=0;i<names.length;i++)
                     {
