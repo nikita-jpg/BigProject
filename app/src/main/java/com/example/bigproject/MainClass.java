@@ -1,23 +1,30 @@
 package com.example.bigproject;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -34,7 +41,9 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
     protected boolean mainClassIsWork;//Показывает открыт ли сейчас главный экран приложения
     private static Intent thisService;//Хранит текущий сервис
     private final String APP_PREFERENCES = "mysettings";//Имя SharedPreference с настройками
-
+    private final String AUTORIZATION = "Autorisation";
+    private final int REQUEST_OF_PERMISSION = 1;
+    private SharedPreferences mSittings;
     //FAB
     private FloatingActionButton fab;
     private FloatingActionButton fabExit;
@@ -55,6 +64,36 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
 
     private int fab_exit_width;
 
+
+    //Запрашиваем разрешения
+    private void setPermission()
+    {
+        //Разрешение на чтение галереи
+        int permissionStatusReadGalary = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        int permissionStatusAlertWindow = ContextCompat.checkSelfPermission(this,Manifest.permission.SYSTEM_ALERT_WINDOW);
+
+        //Разрешение на отображение поверх экрана
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && permissionStatusAlertWindow!= PackageManager.PERMISSION_GRANTED) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + this.getPackageName()));
+                startActivityForResult(intent, REQUEST_OF_PERMISSION);
+            }
+        }
+
+        if(permissionStatusReadGalary == PackageManager.PERMISSION_GRANTED);
+        else ActivityCompat.requestPermissions((Activity) this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},REQUEST_OF_PERMISSION);
+
+    }
+    //Проверяем,выполнен ли уже вход
+    private boolean checkAutorization()
+    {
+
+        mSittings = this.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        if(mSittings.contains(AUTORIZATION) && mSittings.getString(AUTORIZATION,"true").equals("true") )
+            return true;
+        else
+            return false;
+    }
 
     /*Тут происходит запуск основных структур приложения */
     private void inicialization()
@@ -107,9 +146,14 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
         recyclerView.setAdapter(rcAdapter);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected synchronized void stopAuth(android.app.Fragment fragment){
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.remove(fragment).commit();
+        startMainClass();
+    }
+
+    protected synchronized void startMainClass()
+    {
         setContentView(R.layout.activity_main);
         inicialization();
         android.os.Handler handler = new Handler()
@@ -128,6 +172,23 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.first_act);
+
+        setPermission();
+
+        if(!checkAutorization())
+        {
+            //setContentView(R.layout.first_act);
+            Fragment autorization = new Autorization();
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.add(R.id.test,autorization).commit();
+        }
+        else startMainClass();
 
     }
 

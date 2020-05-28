@@ -2,10 +2,6 @@ package com.example.bigproject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Message;
-
-import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,14 +14,13 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.example.bigproject.MainActivity.APP_PREFERENCES;
+
 
 public class ServerWork {
     private static String defaultHost = "https://920ddfa6bc10.ngrok.io/";
@@ -35,7 +30,7 @@ public class ServerWork {
     private static final String folderForImages="images";
     private static String root = "";
     private static Context context;
-
+    private final static String APP_PREFERENCES = "mysettings";
 
     ServerWork(Context context){
         this.context = context;
