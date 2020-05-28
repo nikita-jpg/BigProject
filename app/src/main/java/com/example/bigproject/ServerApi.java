@@ -21,10 +21,15 @@ public interface ServerApi {
     Call<String> autPerson(@Query(value = "login") String login,@Query(value = "password") String password);
 
     @POST("/downloadFile")
-    Call<String[]> uploadText(
+    Call<String[]> downloadText(
             @Query(value = "auth") String authString,
             @Query(value = "name") String name
             );
+    @POST("/downloadImage")
+    Call<String> downloadImage(
+            @Query(value = "auth") String authString,
+            @Query(value = "name") String name
+    );
 
     @POST("/uploadImage")
     Call<Integer> uploadImage(@Query(value = "auth") String authString,

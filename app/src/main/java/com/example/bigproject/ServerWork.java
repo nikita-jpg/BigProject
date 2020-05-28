@@ -18,6 +18,7 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import retrofit2.Call;
@@ -89,14 +90,6 @@ public class ServerWork {
     }
 
     public void saveFromServer(){
-        android.os.Handler handler = new Handler()
-        {
-            @Override
-            public void handleMessage(@NonNull Message msg) {
-                super.handleMessage(msg);
-
-            }
-        };
 
         mSittings = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         final String auth = mSittings.getString(AUTHTOHOST,"");
@@ -115,22 +108,39 @@ public class ServerWork {
                 Call<String[]> request = registrationApi.getFileNameArr(auth);
 
                 try {
-                    String[] arr  = request.execute().body();
+                    String[] names  = request.execute().body();
                     String[] arr2;
-                    if(arr[0].equals("0")) return;
+                    byte[] bytes;
+                    String as = "1";
+                    if(names[0].equals("0")) return;
                     //Переделываем
-                    for(int i=0;i<arr.length;i++)
+                    for(int i=0;i<names.length;i++)
                     {
                         ServerApi registrationApi1 = retrofit.create(ServerApi.class);
-                        Call<String[]> request1 = registrationApi1.uploadText(auth,arr[i]);
-                        arr2 = request1.execute().body();
-                        if(arr2[0].equals("0")) return;
+                        if(names[i].charAt(0) == 'I'){
+                            Call<String> request1 = registrationApi1.downloadImage(auth,names[i]);
+                            names[i] = names[i].replaceAll("_", ":");
+                            as = String.valueOf(request1.execute().body());
+                            String[] byteValues = as.substring(1, as.length() - 1).split(",");
+                            byte[] bytes1 = new byte[byteValues.length];
 
-                        String name = arr2[1].substring(0,arr2[1].indexOf("|"));
-                        name = name.replaceAll("_",":");
-                        String data = arr2[1].substring(arr2[1].indexOf("|"));
-                        LocalBase.writeResponseBodyToDisk(data,name);
+                            for (int j=0, len=bytes1.length; j<len; j++) {
+                                bytes1[j] = java.lang.Byte.parseByte(byteValues[j].trim());
+                            }
+                            String data = new String(bytes1);
+                            LocalBase.writeResponseBodyToDisk(data,names[i].substring(1),true);
+                        }
+                        else
+                            {
+                            Call<String[]> request1 = registrationApi1.downloadText(auth, names[i]);
+                            arr2 = request1.execute().body();
+                            if (arr2[0].equals("0")) return;
 
+                            String name = arr2[1].substring(0, arr2[1].indexOf("|"));
+                            name = name.replaceAll("_", ":");
+                            String data = arr2[1].substring(arr2[1].indexOf("|"));
+                            LocalBase.writeResponseBodyToDisk(data, name, false);
+                        }
                     }
 
                 } catch (IOException e) {
@@ -199,10 +209,6 @@ public class ServerWork {
             });
             thread.start();
         }
-
-
-
-
     }
 
 }

@@ -369,8 +369,12 @@ public class LocalBase {
     }
 
     //Переделываем
-    public static synchronized boolean writeResponseBodyToDisk(String data,String name) {
-        File file1 = new File(root +folderForZametka+"/"+name);
+    public static synchronized boolean writeResponseBodyToDisk(String data,String name,boolean img) {
+        File file1;
+        if(img)
+            file1 = new File(root +folderForImages+"/"+name);
+        else
+            file1 = new File(root +folderForZametka+"/"+name);
         FileOutputStream fileOutputStream = null;
         try {
             fileOutputStream = new FileOutputStream(file1);
