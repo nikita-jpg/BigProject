@@ -141,11 +141,12 @@ public class ZametkaWork {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                Uri uri = Uri.parse(zametkaNew.getUri());
-                zametkaNew.setBitmap( serializationBitmap(uri) );
-                LocalBase.saveStrBitmap(zametkaNew.getData(),zametkaNew.getBitmap());
-                zametkaNew.setUri("");
-                LocalBase.saveZamNotBtm(zametkaNew);
+                Zametka zam = zametkaNew;
+                Uri uri = Uri.parse(zam.getUri());
+                zam.setBitmap( serializationBitmap(uri) );
+                LocalBase.saveStrBitmap(zam.getData(),zam.getBitmap());
+                zam.setUri("");
+                LocalBase.saveZamNotBtm(zam);
             }
         });
         thread.start();

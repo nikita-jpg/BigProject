@@ -187,7 +187,6 @@ public class LocalBase {
     public static synchronized boolean saveStrBitmap(String name, String strBtm)
     {
         if(strBtm.length() == 0) return false;
-
         try {
             String strBtmEncode = encode(strBtm);
             char[] arrS = deCode(strBtmEncode).toCharArray();
@@ -209,7 +208,6 @@ public class LocalBase {
     public static synchronized boolean saveZamNotBtm(Zametka zametka)
     {
         zametka.setBitmap("");
-        zametka.setUri("");
         File file1 = new File(root + folderForZametka +"/"+ zametka.getData() + ".txt");
         try {
             String zamStr = serializationZametke(zametka);
@@ -237,8 +235,10 @@ public class LocalBase {
                 if(saveZamNotBtm(zametka))
                 {
                     updateUI();
-                    ServerWork serverWork = new ServerWork(context);
-                    serverWork.upload(zametka.getData(),context,true);
+                    if(zametka.getUri().equals("")) {
+                        ServerWork serverWork = new ServerWork(context);
+                        serverWork.upload(zametka.getData(), context, true);
+                    }
                     return true;
                 }
                 else
