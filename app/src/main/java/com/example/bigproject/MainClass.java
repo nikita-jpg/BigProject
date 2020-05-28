@@ -100,9 +100,9 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
     {
 
         //Floating Action Buttons
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fabExit = (FloatingActionButton) findViewById(R.id.fab_exit);
-        fabCreateZam = (FloatingActionButton) findViewById(R.id.create_zam);
+        fab =  findViewById(R.id.fab);
+        fabExit = findViewById(R.id.fab_exit);
+        fabCreateZam = findViewById(R.id.create_zam);
 
         //Animations
         show_fab_1 = AnimationUtils.loadAnimation(getApplication(), R.anim.fab1_show);
@@ -180,7 +180,7 @@ public class MainClass extends AppCompatActivity implements View.OnClickListener
         setContentView(R.layout.first_act);
 
         setPermission();
-
+        LocalBase.initialization(this);
         if(!checkAutorization())
         {
             //setContentView(R.layout.first_act);

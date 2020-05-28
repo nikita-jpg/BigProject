@@ -23,7 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class ServerWork {
-    private static String defaultHost = "https://920ddfa6bc10.ngrok.io/";
+    private static String defaultHost = "https://00630754df0a.ngrok.io/";
     private static SharedPreferences mSittings;
     private static final String AUTHTOHOST = "AuthToHost";
     private static final String folderForZametka="zametka";

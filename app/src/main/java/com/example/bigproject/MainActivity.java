@@ -1,7 +1,5 @@
 package com.example.bigproject;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Build;
@@ -19,10 +17,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.first_act);
-        Fragment autorization = new Autorization();
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(R.id.test,autorization).commit();
+
 
     }
 

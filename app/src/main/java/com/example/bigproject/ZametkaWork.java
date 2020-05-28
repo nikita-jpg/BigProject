@@ -144,9 +144,12 @@ public class ZametkaWork {
                 Zametka zam = zametkaNew;
                 Uri uri = Uri.parse(zam.getUri());
                 zam.setBitmap( serializationBitmap(uri) );
-                LocalBase.saveStrBitmap(zam.getData(),zam.getBitmap());
                 zam.setUri("");
-                LocalBase.saveZamNotBtm(zam);
+                try {
+                    LocalBase.save(zam);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
         thread.start();

@@ -85,13 +85,11 @@ public class Autorization extends Fragment implements View.OnClickListener {
                              @Nullable Bundle savedInstanceState) {
         //Получаем разрешение на чтение из галереи и отображение поверх экрана
         this.context = getActivity().getApplication();
-        LocalBase.initialization(context);
         View rootView =
                 inflater.inflate(R.layout.activity_autorization, container, false);
 
             loginText = rootView.findViewById(R.id.loginText);
             passwordText = rootView.findViewById(R.id.passwordText);
-            requestTextView = rootView.findViewById(R.id.requestTextView);
             enterBtn = rootView.findViewById(R.id.enterBtn);
             regBtn = rootView.findViewById(R.id.regBtn);
 

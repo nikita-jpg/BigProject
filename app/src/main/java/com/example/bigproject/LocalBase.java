@@ -1,20 +1,13 @@
 package com.example.bigproject;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Message;
-import android.security.keystore.KeyProperties;
 import android.util.Base64;
-import android.util.Log;
 
 import com.scottyab.aescrypt.AESCrypt;
-import com.yakivmospan.scytale.Crypto;
 import com.yakivmospan.scytale.KeyProps;
-import com.yakivmospan.scytale.Options;
 import com.yakivmospan.scytale.Store;
-
 
 import org.apache.commons.io.FileUtils;
 
@@ -25,30 +18,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
-import java.util.logging.Handler;
 
-import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
-
-import okhttp3.ResponseBody;
-
-import static android.content.ContentValues.TAG;
 
 public class LocalBase {
 
@@ -189,9 +172,6 @@ public class LocalBase {
         if(strBtm.length() == 0) return false;
         try {
             String strBtmEncode = encode(strBtm);
-            char[] arrS = deCode(strBtmEncode).toCharArray();
-            String arr = deCode(strBtmEncode);
-            Bitmap bitmap = ZametkaWork.deSerializationBitmap(String.valueOf(arrS));
 
             File file1 = new File(root + folderForImages + "/" + name + ".txt");
             FileOutputStream fileOutputStream = new FileOutputStream(file1);
@@ -249,8 +229,10 @@ public class LocalBase {
             if(saveZamNotBtm(zametka))
             {
                 updateUI();
-                ServerWork serverWork = new ServerWork(context);
-                serverWork.upload(zametka.getData(),context,false);
+                if(zametka.getUri().equals("")) {
+                    ServerWork serverWork = new ServerWork(context);
+                    serverWork.upload(zametka.getData(), context, true);
+                }
                 return true;
             }
             else
@@ -279,7 +261,7 @@ public class LocalBase {
                 e.printStackTrace();
             }
         }
-        File file2 = new File(root + folderForImages);
+        File file2 = new File(root + folderForImages+"/");
         if (file2.exists()) {
             try {
                 FileUtils.deleteDirectory(file2);
